@@ -1,0 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+namespace [Namespace];
+
+use Radix\Database\ORM\Model;
+
+class [ModelName] extends Model
+{
+    protected string $table = '[table_name]'; // Dynamiskt genererat tabellnamn
+    protected string $primaryKey = 'id';     // Standard primärnyckel
+    public bool $timestamps = true;         // Vill du använda timestamps?
+}

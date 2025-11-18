@@ -1,0 +1,52 @@
+{
+    "name": "mats/radix",
+    "description": "Radix System",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mats Åkebrand",
+            "email": "malle@akebrands.se"
+        }
+    ],
+    "scripts": {
+      "stan": "phpstan analyse",
+      "test": "phpunit"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src",
+            "Radix\\": "framework/src"
+        },
+        "files": [
+          "framework/support/helpers.php",
+          "support/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Radix\\Tests\\": "tests"
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "7.1.x-dev",
+        "phpunit/phpunit": "^11.0@dev",
+        "phpstan/phpstan": "2.1.x-dev"
+    },
+    "require": {
+        "php": "^8.3",
+        "psr/event-dispatcher": "^1.0@dev",
+        "psr/container": "^2.0.x-dev",
+        "dflydev/dot-access-data": "^v3.0.2",
+        "ext-pdo": "*",
+        "phpmailer/phpmailer": "dev-master",
+        "ext-gd": "*",
+        "ext-exif": "*",
+        "ext-ctype": "*",
+        "ext-openssl": "*",
+        "ext-fileinfo": "*",
+        "ext-iconv": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*"
+    }
+}

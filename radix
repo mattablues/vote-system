@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+use Radix\Console\ConsoleApplication;
+
+const ROOT_PATH = __DIR__; // Definiera roten för projektet
+
+require_once ROOT_PATH . '/vendor/autoload.php';
+
+$container = require ROOT_PATH . '/bootstrap/app.php'; // OBS: Hämta container här
+
+// Kontrollera att $container är korrekt
+if (!$container instanceof Psr\Container\ContainerInterface) {
+    throw new RuntimeException("DI-container är inte en giltig Psr\Container\ContainerInterface-implementation.");
+}
+
+// Skapa ConsoleApplication och injicera containern
+//$app = new ConsoleApplication($container);
+$app = new ConsoleApplication();
+
+// Dynamiskt registrera alla kommandon från DI-container
+foreach ($container->get(Radix\Console\CommandsRegistry::class)->getCommands() as $name => $commandClass) {
+    $app->addCommand($name, fn(array $args) => $container->get($commandClass)->__invoke(array_merge(['_command' => $name], $args)));
+}
+
+// Kör Console-appen
+$app->run($argv);

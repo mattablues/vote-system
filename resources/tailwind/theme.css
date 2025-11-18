@@ -1,0 +1,72 @@
+@theme {
+  --animate-move-in-top: moveInTop .3s ease-out backwards;
+  --animate-move-in-bottom: moveInBottom .3s ease-out backwards;
+  --animate-fade-in-top: fadeInTop .5s ease-out forwards;
+  --header-h: 60px;
+    /* Layout-variabler */
+  --aside-w: 300px;        /* default för enkel layout */
+  --aside-left-w: 300px;   /* default vänster i both */
+  --aside-right-w: 300px;  /* default höger i both */
+  --container-max: 1200px;
+  --footer-h: 50px;
+  --sidebar-w: 260px;
+  --sidebar-w-neg: calc(var(--sidebar-w) * -1);
+  --sidebar-aside-w: 220px;
+  /* 11px */
+  --text-xxs: 0.6875rem;
+  /* följ samma ratio-syntax: line-height i rem/px-termer som kvot */
+  --text-xxs--line-height: calc(16 / 11); /* ≈1.2727 om du vill ha ~14px radavstånd */
+
+  /* Spacing (exempel) */
+  --space-6: 1.5rem; /* motsv. tailwind top-6 */
+  --gap-lg: 1.75rem;   /* motsv. gap-8 */
+
+  /* Pagination tema-variabler */
+  --pagination-bg: theme(colors.white);
+  --pagination-text: theme(colors.blue.600);
+  --pagination-border: theme(colors.blue.200);
+
+  --pagination-hover-bg: theme(colors.blue.50);
+
+  --pagination-active-bg: theme(colors.blue.600);
+  --pagination-active-text: theme(colors.white);
+  --pagination-active-border: theme(colors.blue.600);
+
+  --pagination-disabled-text: theme(colors.gray.300);
+  --pagination-disabled-border: theme(colors.gray.200);
+
+  --pagination-ellipsis-text: theme(colors.gray.400);
+
+
+  @keyframes moveInTop {
+    0% {
+      transform: translateY(0);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes moveInBottom {
+    0% {
+      transform: translateY(100px);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInTop {
+    0% {
+      opacity: 1;
+      transform: translateY(-300px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

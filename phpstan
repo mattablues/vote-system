@@ -1,0 +1,69 @@
+- composer phpstan
+- vendor/bin/phpstan analyse -c phpstan.neon.dist
+
+
+Grundstruktur
+Filnamn: phpstan.neon eller phpstan.neon.dist
+Körning: vendor/bin/phpstan analyse -c phpstan.neon.dist
+Basparametrar
+level: 0–9 (högre = striktare). Rekommenderat att börja på 4–5 och höja gradvis.
+paths: vilka mappar/fil(er) som ska analyseras.
+autoload_files: filer att autoloada (helpers etc.) innan analysen.
+bootstrapFiles: PHP-filer som körs före analys (kan sätta upp autoloader, constants).
+scanFiles / scanDirectories: extra filer/mappar att scanna utan att analysera dem (nyttigt för meta/registrering).
+inferPrivatePropertyTypeFromConstructor: true = PHPStan gissar typ från konstruktor.
+treatPhpDocTypesAsCertain: false = var lite försiktigare med PHPDoc-typer.
+reportUnmatchedIgnoredErrors: true = om en ignoreErrors-regex inte matchar något fel, rapportera det (bra för städning).
+Exempel: minimal parameters: level: 5 paths: - framework/src
+Exempel: lite mer komplett parameters: level: 5 paths: - framework/src - src autoload_files: - framework/support/helpers.php - support/helpers.php bootstrapFiles: - vendor/autoload.php inferPrivatePropertyTypeFromConstructor: true treatPhpDocTypesAsCertain: false reportUnmatchedIgnoredErrors: true
+ignoreErrors
+Använd sparsamt och snävt. Mönstret är en regex.
+Bra när du har dynamiska ORM-magic-metoder som PHPStan inte kan härleda korrekt.
+Exempel: ignorera ett specifikt dynamiskt anrop parameters: ignoreErrors: - '#Call to an undefined method App\Models\.*::relation()#'
+Exempel: ignorera en enskild varning i en fil på en viss rad (mer exakt) parameters: ignoreErrors: - message: '#Call to an undefined method App\Models\User::relation()#' paths: - src/Models/User.php count: 1
+Tips:
+Lägg hellre en @phpstan-ignore-next-line i koden vid falsk positiv än en bred ignore i konfig.
+Håll ignoreErrors-listan kort och dokumenterad.
+includes (modulär konfig)
+Du kan bryta upp konfig i flera filer och inkludera dem.
+Exempel: includes:
+phpstan-baseline.neon
+phpstan-strict.neon
+Baselines
+PHPStan kan skapa en baseline av nuvarande fel som ignoreras tills du fixar dem gradvis.
+Skapa: vendor/bin/phpstan analyse -c phpstan.neon.dist --generate-baseline
+Använd: lägg till includes: - phpstan-baseline.neon
+Exempel med baseline includes:
+phpstan-baseline.neon parameters: level: 6 paths:
+framework/src
+Levels
+0: minst strikt
+1–3: grundläggande typer
+4–5: bra balans för medelstora projekt
+6–7: striktare, fler falska positiva om mycket magic/dynamik
+8–9: väldigt strikt, kräver vältypad kodbas
+Tilläggsplugins
+doctrine: doctrine/orm + phpstan/phpstan-doctrine
+laravel: nunomaduro/larastan (för Laravel-projekt)
+generics: phpstan/phpstan-strict-rules (striktare regler)
+Exempel scripts i composer.json "scripts": { "phpstan": "vendor/bin/phpstan analyse -c phpstan.neon.dist", "phpstan:baseline": "vendor/bin/phpstan analyse -c phpstan.neon.dist --generate-baseline", "phpstan:max": "vendor/bin/phpstan analyse -c phpstan.neon.dist --level=max" }
+Filtrera bort mappar
+excludePaths: uteslut kataloger/filer från analys.
+Exempel: parameters: excludePaths: - vendor - storage - cache - framework/src/Database/Migrations/Legacy/*
+Kontextberoende autoload/const
+bootstrapFiles kan sätta upp konstanta värden, t.ex. define('APP_ENV', 'testing');
+Exempel: parameters: bootstrapFiles: - tools/bootstrap-phpstan.php
+tools/bootstrap-phpstan.php:
+
+
+parameters:
+    level: 6
+    paths:
+        - src
+        - framework/src
+        - tests
+    reportUnmatchedIgnoredErrors: true
+    inferPrivatePropertyTypeFromConstructor: true
+    treatPhpDocTypesAsCertain: false
+    bootstrapFiles:
+    - tools/phpstan-bootstrap.php

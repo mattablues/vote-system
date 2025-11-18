@@ -1,0 +1,21 @@
+# Ignorera miljövariabler
+.env
+.env.test
+public/css/app.css
+public/js/app.js
+public/images/user
+# Composer- och npm-relaterade filer
+composer.lock
+package-lock.json
+vendor/
+node_modules/
+
+# PHPUnit-cachefiler
+.phpunit.cache
+.phpunit.result.cache
+phpunit.xml.bak
+
+# PhpStorm-specifika filer
+.idea/
+cache/
+storage/

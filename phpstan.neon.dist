@@ -1,0 +1,16 @@
+parameters:
+    level: 10
+    paths:
+        - bootstrap
+        - framework/src
+        - framework/support
+        - src
+        - tests
+        - config
+        - public
+        - support
+    reportUnmatchedIgnoredErrors: true
+    inferPrivatePropertyTypeFromConstructor: true
+    treatPhpDocTypesAsCertain: false
+    bootstrapFiles:
+    - tools/phpstan-bootstrap.php

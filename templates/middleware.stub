@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace [Namespace];
+
+use Radix\Http\Request;
+use Radix\Http\RequestHandlerInterface;
+use Radix\Http\Response;
+use Radix\Middleware\MiddlewareInterface;
+
+class [MiddlewareName] implements MiddlewareInterface
+{
+    public function process(Request $request, RequestHandlerInterface $next): Response
+    {
+
+        return $next->handle($request);
+    }
+}

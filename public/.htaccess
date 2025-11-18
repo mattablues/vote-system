@@ -1,0 +1,21 @@
+RewriteEngine On
+
+# Vidarebefordra Authorization-headern (Behövs för vissa autentiseringssystem)
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# Caching för statiska resurser
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|css|png|jpg|gif|svg|woff|woff2|ttf|eot|ico)$">
+        Header set Cache-Control "max-age=31536000, public"
+    </FilesMatch>
+    # Ignorera cachelagring för resurser med query-parametrar
+    <If "%{QUERY_STRING} =~ /v=/">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </If>
+</IfModule>
+
+# Dirigera allt som inte är en fil, katalog eller symbolisk länk till index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^ index.php [L]

@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+namespace [Namespace];
+
+use Radix\EventDispatcher\Event;
+
+class [EventName] extends Event
+{
+
+}

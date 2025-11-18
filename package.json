@@ -1,0 +1,39 @@
+{
+  "name": "radix",
+  "version": "1.0.0",
+  "description": "Radix System",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "watch:tailwind": "npx rimraf public/css/app.css && npx @tailwindcss/cli -i resources/tailwind/index.css -o public/css/app.css --watch && npx touch public/css/app.css",
+    "watch:alpinejs": "npx rimraf public/js/app.js && npx esbuild resources/js/index.js --outfile=public/js/app.js --bundle --watch && npx touch public/js/app.js",
+    "build:css": "npx @tailwindcss/cli -i resources/tailwind/index.css -o public/css/app.css",
+    "build:js": "npx esbuild resources/js/index.js --outfile=public/js/app.js --bundle",
+    "start:dev": "npm-run-all --parallel watch:tailwind watch:alpinejs",
+    "prefix:css": "postcss public/css/app.css --use autoprefixer -o public/css/app.css",
+    "compress:css": "npx tailwindcss -o public/css/app.css --minify",
+    "compress:js": "uglifyjs public/js/app.js -o public/js/app.js --compress",
+    "start:build": "npm-run-all build:js build:css prefix:css compress:js compress:css",
+    "toc": "doctoc README.md --maxlevel 3"
+  },
+  "author": "Mats Åkebrand",
+  "license": "MIT",
+  "devDependencies": {
+    "@alpinejs/collapse": "^3.14.9",
+    "@alpinejs/focus": "^3.14.9",
+    "@alpinejs/ui": "^3.14.9",
+    "@imacrayon/alpine-ajax": "^0.12.4",
+    "@tailwindcss/cli": "^4.1.12",
+    "@tailwindcss/forms": "^0.5.10",
+    "alpinejs": "^3.14.9",
+    "autoprefixer": "^10.4.21",
+    "concat": "^1.0.3",
+    "esbuild": "^0.25.9",
+    "npm-run-all": "^4.1.5",
+    "postcss-cli": "^11.0.1",
+    "rimraf": "^6.0.1",
+    "uglify-js": "^3.19.3"
+  }
+}

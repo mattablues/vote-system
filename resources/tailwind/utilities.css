@@ -1,0 +1,108 @@
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge, and Firefox */
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  [x-cloak] {
+    display: none !important;
+  }
+
+  .text-xxs {
+    font-size: var(--text-xxs);
+    line-height: var(--text-xxs--line-height);
+  }
+
+  /* Responsiv sticky: av på små skärmar, på från lg */
+  .sticky-top {
+    position: static;
+    top: auto;
+    align-self: start;
+    overflow: visible;
+  }
+  @media (min-width: 1024px) {
+    .sticky-top {
+      position: sticky;
+      top: var(--header-h, 60px);
+    }
+    .sticky-top.limit-vh {
+      max-height: calc(100vh - var(--header-h, 60px) - var(--footer-h, 0px));
+      overflow: auto;
+    }
+
+    /* Nolla offset (ignorera header-h) */
+    .sticky-top--no-offset {
+      top: 0;
+    }
+
+    /* Begränsa höjd med samma offset som sticky-top */
+    .sticky-top--limit {
+      max-height: calc(100vh - var(--header-h, 60px) - var(--footer-h, 0px));
+      overflow: auto;
+    }
+  }
+
+  /* Gemensamma areas (för left/right/both) */
+  .area-aside-left { grid-area: aside-left; }
+  .area-aside-right { grid-area: aside-right; }
+  .area-content { grid-area: content; }
+
+  /* Left */
+  .layout-aside-left {
+    display: grid;
+    gap: var(--gap-lg);
+    grid-template-areas:
+      "content"
+      "aside-left";
+  }
+  @media (min-width: 1024px) {
+    .layout-aside-left {
+      grid-template-columns: var(--aside-w, 300px) 1fr;
+      grid-template-areas: "aside-left content";
+      align-items: start;
+      overflow: visible;
+    }
+  }
+
+  /* Right */
+  .layout-aside-right {
+    display: grid;
+    gap: var(--gap-lg);
+    grid-template-areas:
+      "content"
+      "aside-right";
+  }
+  @media (min-width: 1024px) {
+    .layout-aside-right {
+      grid-template-columns: 1fr var(--aside-w, 300px);
+      grid-template-areas: "content aside-right";
+      align-items: start;
+      overflow: visible;
+    }
+  }
+
+  /* Both: inget gap på små skärmar, gap på lg+ */
+  .layout-aside-both {
+    display: grid;
+    gap: 0;
+    grid-template-areas:
+      "content"
+      "aside-left"
+      "aside-right";
+  }
+  @media (min-width: 1024px) {
+    .layout-aside-both {
+      gap: var(--gap-lg);
+      grid-template-columns: var(--aside-left-w, var(--aside-w,300px)) 1fr var(--aside-right-w, var(--aside-w,300px));
+      grid-template-areas: "aside-left content aside-right";
+      align-items: start;
+      overflow: visible;
+    }
+  }
+}

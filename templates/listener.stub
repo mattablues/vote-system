@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace [Namespace];
+
+class [ListenerName]
+{
+    public function __invoke(): void
+    {
+
+    }
+}

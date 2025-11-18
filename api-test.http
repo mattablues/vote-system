@@ -1,0 +1,65 @@
+### Ny request med genererad token
+GET http://radix-build/api/v1/users
+Authorization: Bearer 02ef9028326eaa5cf9300ffe01d1671b
+
+
+### Test utan token (borde returnera 401)
+GET http://radix-build/api/v1/users
+
+### Test med ogiltig token
+GET http://radix-build/api/v1/users
+Authorization: Bearer invalidtoken12345
+
+### PUT: Uppdatera alla fält för en användare
+PUT http://radix-build/api/v1/users/3
+Authorization: Bearer 02ef9028326eaa5cf9300ffe01d1671b
+Content-Type: application/json
+
+{
+  "first_name": "Updated",
+  "last_name": "Full Update",
+  "email": "updated@example.com",
+  "password": "NewStrongPassword123"
+}
+
+### POST: Test utan obligatoriska fält (validering ska misslyckas)
+POST http://radix-build/api/v1/users
+Authorization: Bearer 02ef9028326eaa5cf9300ffe01d1671b
+Content-Type: application/json
+
+{
+}
+
+### Responsen bör returnera 422 (valideringsfel) med felmeddelanden för obligatoriska fält.
+
+### POST: Test med några felaktiga värden
+POST http://radix-build/api/v1/users
+Authorization: Bearer 02ef9028326eaa5cf9300ffe01d1671b
+Content-Type: application/json
+
+{
+  "first_name": "A",
+  "last_name": "",
+  "email": "notaemail.com",
+  "password": "123"
+}
+
+
+### PATCH: Uppdatera delvis användaren
+PATCH http://radix-build/api/v1/users/3
+Authorization: Bearer 02ef9028326eaa5cf9300ffe01d1671b
+Content-Type: application/json
+
+{
+    "first_name": "Partially",
+    "last_name": "Optional"
+}
+
+
+### Test med en utgången token
+GET http://radix-build/api/v1/users
+Authorization: Bearer 02ef9028326eaa5cf9300ffe01d1671b
+
+### DELETE: Radera en användare
+DELETE http://radix-build/api/v1/users/3
+Authorization: Bearer 02ef9028326eaa5cf9300ffe01d1671b

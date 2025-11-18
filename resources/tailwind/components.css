@@ -1,0 +1,146 @@
+.activated {
+  @apply bg-green-600/70 text-white;
+}
+
+.text-activated {
+  @apply text-green-600/80;
+}
+
+.activate {
+  @apply bg-orange-400/70 text-white;
+}
+
+.text-activate {
+  @apply text-orange-400/80;
+}
+
+
+.blocked {
+  @apply bg-red-600/70 text-white;
+}
+
+.text-blocked {
+  @apply text-red-600/80;
+}
+
+.closed {
+  @apply bg-gray-600/70 text-white;
+}
+
+.text-closed {
+  @apply text-gray-600/80;
+}
+
+.offline {
+  @apply bg-gray-200/70 text-gray-400;
+}
+
+.text-offline {
+  @apply text-gray-200/80;
+}
+
+.online {
+  @apply bg-green-600/70 text-white;
+}
+
+.text-online {
+  @apply text-green-600/80;
+}
+
+.container-base {
+  @apply w-full xl:max-w-[1440px] px-3 md:px-5 lg:px-7;
+}
+
+.container-centered {
+  @apply w-full xl:max-w-[1440px] mx-auto px-3 md:px-5 lg:px-7;
+}
+
+.container-centered-sm {
+  @apply w-full xl:max-w-[900px] mx-auto px-3 md:px-5 lg:px-7;
+}
+
+.flash {
+  @apply w-full xl:max-w-[1440px] mx-auto px-3 md:px-5 lg:px-7 mb-2 rounded;
+}
+
+.container-base  .flash {
+  @apply w-full xl:max-w-[1440px] px-0 mb-2 rounded;
+}
+
+.flash-enlightenment {
+  @apply text-slate-800;
+}
+
+.flash-success {
+  @apply text-green-800;
+}
+
+.flash-warning {
+  @apply text-orange-800;
+}
+
+.flash-error {
+  @apply text-red-800;
+}
+
+.flash-info {
+  @apply text-blue-800;
+}
+
+.flash-box {
+  @apply w-full border py-2 px-3 mb-2 rounded;
+}
+
+.flash-box-enlightenment {
+  @apply bg-slate-50 border-slate-500 text-slate-800;
+}
+
+.flash-box-success {
+  @apply bg-green-50 border-green-500 text-green-800;
+}
+
+.flash-box-warning {
+  @apply bg-orange-50 border-orange-500 text-orange-800;
+}
+
+.flash-box-error {
+  @apply bg-red-50 border-red-500 text-red-800;
+}
+
+.flash-box-info {
+  @apply bg-blue-50 border-blue-500 text-blue-800;
+}
+
+.search-results {
+  @apply py-4;
+}
+
+.search-result-item {
+  @apply py-2;
+}
+
+/* Hjälpklasser bundna till variablerna (så du kan återanvända och byta färger centralt) */
+.pager-base {
+  background-color: var(--pagination-bg);
+  color: var(--pagination-text);
+  border-color: var(--pagination-border);
+}
+
+.pager-hover:hover {
+  background-color: var(--pagination-hover-bg);
+}
+
+.pager-active {
+  background-color: var(--pagination-active-bg);
+  color: var(--pagination-active-text);
+  border-color: var(--pagination-active-border);
+}
+
+.pager-disabled {
+  color: var(--pagination-disabled-text);
+  border-color: var(--pagination-disabled-border);
+}
+
+.pager-ellipsis {
+  color: var(--pagination-ellipsis-text);
+}
