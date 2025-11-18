@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
   <link rel="manifest" href="/icons/site.webmanifest">
 </head>
-<body x-data="{ openSidebar: false, openCloseModal: false, openDeleteModal: false }" id="{% yield pageId %}" class="relative min-h-screen {% yield pageClass %}">
+<body x-data="{ openSidebar: false, openCloseModal: false, openDeleteModal: false, activeDropdown: null }" id="{% yield pageId %}" class="relative min-h-screen {% yield pageClass %}">
   <header class="sticky top-0 z-50 w-full bg-gray-900">
     <div class="container-base relative">
       <div class="h-15 flex items-center justify-between">
@@ -24,7 +24,7 @@
 
         <div class="flex items-center gap-2">
           <!-- Mobil: sökikon -->
-          <button type="button" id="search-toggle" class="md:hidden p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-800 cursor-pointer" aria-label="Öppna sök">
+          <button type="button" id="search-toggle" class="md:hidden p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-800" aria-label="Öppna sök">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197M15.803 15.803A7.5 7.5 0 1 1 5.196 5.196a7.5 7.5 0 0 1 10.607 10.607Z"/>
             </svg>
@@ -53,7 +53,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-sm text-gray-300">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
-              <label for="{% yield searchId %}" class="sr-only">Sök</label>
+              <label for="{% yield searchId %}" class="sr-only">Sök användare</label>
               <input class="text-[15px] ml-4 w-full md:w-[280px] bg-transparent border-none py-0 px-0 focus:ring-0 text-gray-100 placeholder:text-gray-300"
                      id="{% yield searchId %}" placeholder="Sök..." autocomplete="off">
             </div>
@@ -209,6 +209,57 @@
             <li class="mt-1 ml-1 rounded-md cursor-pointer hover:bg-gray-700">
               <a href="{{ route('admin.health.index') }}" class="w-full inline-block py-2 px-8">Status</a>
             </li>
+          </ul>
+        </div>
+{% endif; %}
+{% if($currentUser->hasAtLeast('editor')) : %}
+        <div x-data="{ sidebarDropdown: false }">
+          <div class="mt-2 px-4 flex items-center rounded-md transition-all duration-300 cursor-pointer hover:bg-blue-600">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+              <path d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z" />
+              <path fill-rule="evenodd" d="m3.087 9 .54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.913 9H3.087Zm6.163 3.75A.75.75 0 0 1 10 12h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+            </svg>
+
+            <div class="w-full flex justify-between items-center" x-on:click="sidebarDropdown = !sidebarDropdown">
+              <span class="text-sm ml-4 py-3 text-gray-200">Röstning</span>
+              <span class="text-sm rotate-180" id="arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"
+                :class="sidebarDropdown ? 'transition-all rotate-180 duration-300 ease-out' : 'transition-all rotate-0 duration-300 ease-out'"
+                >
+                  <path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd" />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <ul
+            x-cloak
+            x-show="sidebarDropdown"
+            x-transition:enter="transition-all duration-200 ease-out"
+            x-transition:enter-start="-translate-y-5 opacity-0"
+            x-transition:enter-end="translate-y-0 opacity-100"
+            x-transition:leave="transition-all duration-200 ease-in"
+            x-transition:leave-start="translate-y-0 opacity-100"
+            x-transition:leave-end="-translate-y-5 opacity-0"
+            class="leading-7 text-left text-sm font-thin mt-2 w-4/5 mx-auto border-l-1 border-gray-700"
+          >
+            <li class="mt-1 ml-1 rounded-md cursor-pointer hover:bg-gray-700">
+              <a href="{{ route('admin.category.index') }}" class="w-full inline-block py-2 px-8">Kategorier</a>
+            </li>
+            <li class="mt-1 ml-1 rounded-md cursor-pointer hover:bg-gray-700">
+              <a href="{{ route('admin.subject.index') }}" class="w-full inline-block py-2 px-8">Ämnen</a>
+            </li>
+{% if($currentUser->hasAtLeast('moderator')) : %}
+            <li class="mt-1 ml-1 rounded-md cursor-pointer hover:bg-gray-700">
+              <a href="{{ route('admin.voter.index') }}" class="w-full inline-block py-2 px-8">Röstberättigade</a>
+            </li>
+            <li class="mt-1 ml-1 rounded-md cursor-pointer hover:bg-gray-700">
+              <a href="{{ route('admin.category.create') }}" class="w-full inline-block py-2 px-8">Skapa ny kategori</a>
+            </li>
+            <li class="mt-1 ml-1 rounded-md cursor-pointer hover:bg-gray-700">
+              <a href="{{ route('admin.subject.create') }}" class="w-full inline-block py-2 px-8">Skapa nytt ämne</a>
+            </li>
+{% endif; %}
           </ul>
         </div>
 {% endif; %}

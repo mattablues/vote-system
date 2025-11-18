@@ -120,16 +120,6 @@ class Status extends Model
         };
     }
 
-    /**
-     * Visa senaste aktiveringstidpunkt som ett läsbart datum.
-     */
-//    public function lastActive(): ?string
-//    {
-//        // check
-//        //return $this->active_at ? date('Y-m-d H:i:s', (int)$this->active_at) : null;
-//        return $this->active_at ?: null;
-//    }
-
     public function user(): \Radix\Database\ORM\Relationships\BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

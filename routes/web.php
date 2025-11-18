@@ -8,13 +8,13 @@ $router->get('/', [
     \App\Controllers\HomeController::class, 'index'
 ])->name('home.index');
 
-$router->get('/contact', [
-    \App\Controllers\ContactController::class, 'index'
-])->name('contact.index');
-
 $router->get('/about', [
     \App\Controllers\AboutController::class, 'index'
 ])->name('about.index');
+
+$router->get('/contact', [
+    \App\Controllers\ContactController::class, 'index'
+])->name('contact.index');
 
 $router->post('/contact', [
     \App\Controllers\ContactController::class, 'create'
@@ -23,6 +23,92 @@ $router->post('/contact', [
 $router->get('/cookie', [
     \App\Controllers\CookieController::class, 'index'
 ])->name('cookie.index');
+
+$router->get('/categories', [
+    \App\Controllers\Votes\CategoryController::class, 'index'
+])->name('votes.category.index');
+
+$router->get('/category/{id:[\d]+}/show', [
+    \App\Controllers\Votes\CategoryController::class, 'show'
+])->name('votes.category.show');
+
+$router->get('/subjects', [
+    \App\Controllers\Votes\SubjectController::class, 'index'
+])->name('votes.subject.index');
+
+$router->get('/subject/create', [
+    \App\Controllers\Votes\SubjectController::class, 'create'
+])->name('votes.subject.create')->middleware(['voter.auth']);
+
+$router->post('/subject/store', [
+    \App\Controllers\Votes\SubjectController::class, 'store'
+])->name('votes.subject.store');
+
+$router->get('/subject/{id:[\d]+}/vote', [
+    \App\Controllers\Votes\VoteController::class, 'index'
+])->name('votes.vote.index');
+
+$router->post('/subject/{id:[\d]+}/vote', [
+    \App\Controllers\Votes\VoteController::class, 'create'
+])->name('votes.vote.create')->middleware(['voter.auth']);
+
+$router->group(['middleware' => ['location', 'voter.quest']], function () use ($router) {
+    $router->get('/voter', [
+        \App\Controllers\Votes\VoterController::class, 'index'
+    ])->name('voter.index');
+
+    $router->post('/voter', [
+        \App\Controllers\Votes\VoterController::class, 'create'
+    ])->name('voter.create');
+});
+
+$router->get('/voter/unregister', [
+    \App\Controllers\Votes\VoterController::class, 'unregister'
+])->name('voter.unregister');
+
+$router->post('/voter/unregister', [
+    \App\Controllers\Votes\VoterController::class, 'store'
+])->name('voter.store');
+
+$router->get('/voter/login', [
+    \App\Controllers\Votes\VoterAuthController::class, 'login'
+])->name('voter.auth.login')->middleware(['voter.quest']);
+
+$router->post('/voter/login', [
+    \App\Controllers\Votes\VoterAuthController::class, 'create'
+])->name('voter.auth.create')->middleware(['voter.quest']);
+
+$router->post('/voter/logout', [
+    \App\Controllers\Votes\VoterAuthController::class, 'logout'
+])->name('voter.auth.logout')->middleware(['voter.auth']);
+
+$router->get('/voter/delete/{token:[\da-f]+}', [
+    \App\Controllers\Votes\VoterController::class, 'delete'
+])->name('voter.delete');
+
+$router->post('/voter/delete/{token:[\da-f]+}', [
+    \App\Controllers\Votes\VoterController::class, 'remove'
+])->name('voter.remove');
+
+$router->get('/voter/activate/{token:[\da-f]+}', [
+    \App\Controllers\Votes\VoterController::class, 'activate'
+])->name('voter.activate');
+
+$router->get('/voter/password-forgot', [
+    \App\Controllers\Votes\PasswordForgotController::class, 'index'
+])->name('voter.password-forgot.index');
+
+$router->post('/voter/password-forgot', [
+    \App\Controllers\Votes\PasswordForgotController::class, 'create'
+])->name('voter.password-forgot.create');
+
+$router->get('/voter/password-reset/{token:[\da-f]+}', [
+    \App\Controllers\Votes\PasswordResetController::class, 'index'
+])->name('voter.password-reset.index');
+
+$router->post('/voter/password-reset/{token:[\da-f]+}', [
+    \App\Controllers\Votes\PasswordResetController::class, 'create'
+])->name('voter.password-reset.create');
 
 $router->group(['middleware' => ['private', 'guest']], function () use ($router) {
     $router->get('/register', [
@@ -128,6 +214,44 @@ $router->group(['path' => '/admin', 'middleware' => ['auth', 'role.exact.admin']
     ])->name('admin.user.role');
 });
 
+$router->group(['path' => '/admin', 'middleware' => ['auth', 'role.min.editor']], function () use ($router) {
+    $router->get('/categories', [
+        \App\Controllers\Admin\CategoryController::class, 'index'
+    ])->name('admin.category.index');
+
+    $router->get('/categories/{id:[\d]+}/edit', [
+        \App\Controllers\Admin\CategoryController::class, 'edit'
+    ])->name('admin.category.edit');
+
+    $router->post('/categories/{id:[\d]+}/update', [
+        \App\Controllers\Admin\CategoryController::class, 'update'
+    ])->name('admin.category.update');
+
+    $router->get('/subjects', [
+        \App\Controllers\Admin\SubjectController::class, 'index'
+    ])->name('admin.subject.index');
+
+    $router->get('/subject/create', [
+    \App\Controllers\Admin\SubjectController::class, 'create'
+    ])->name('admin.subject.create');
+
+    $router->post('/subject/store', [
+        \App\Controllers\Admin\SubjectController::class, 'store'
+    ])->name('admin.subject.store');
+
+    $router->post('/subjects/{id:[\d]+}/post', [
+        \App\Controllers\Admin\SubjectController::class, 'publish'
+    ])->name('admin.subject.publish');
+
+    $router->get('/subjects/{id:[\d]+}/edit', [
+        \App\Controllers\Admin\SubjectController::class, 'edit'
+    ])->name('admin.subject.edit');
+
+    $router->post('/subjects/{id:[\d]+}/update', [
+        \App\Controllers\Admin\SubjectController::class, 'update'
+    ])->name('admin.subject.update');
+});
+
 $router->group(['path' => '/admin', 'middleware' => ['auth', 'role.min.moderator']], function () use ($router) {
     $router->get('/users', [
         \App\Controllers\Admin\UserController::class, 'index'
@@ -148,6 +272,34 @@ $router->group(['path' => '/admin', 'middleware' => ['auth', 'role.min.moderator
     $router->post('/users/{id:[\d]+}/restore', [
         \App\Controllers\Admin\UserController::class, 'restore'
     ])->name('admin.user.restore');
+
+    $router->get('/voters', [
+        \App\Controllers\Admin\VoterController::class, 'index'
+    ])->name('admin.voter.index');
+
+    $router->post('/voters/{id:[\d]+}/send-activation', [
+        \App\Controllers\Admin\VoterController::class, 'sendActivation'
+    ])->name('admin.voter.send-activation');
+
+    $router->post('/voters/{id:[\d]+}/block', [
+        \App\Controllers\Admin\VoterController::class, 'block'
+    ])->name('admin.voter.block');
+
+    $router->get('/categories/create', [
+        \App\Controllers\Admin\CategoryController::class, 'create'
+    ])->name('admin.category.create');
+
+    $router->post('/categories/create', [
+        \App\Controllers\Admin\CategoryController::class, 'store'
+    ])->name('admin.category.store');
+
+    $router->post('/categories/{id:[\d]+}/delete', [
+        \App\Controllers\Admin\CategoryController::class, 'delete'
+    ])->name('admin.category.delete');
+
+    $router->post('/subjects/{id:[\d]+}/delete', [
+        \App\Controllers\Admin\SubjectController::class, 'delete'
+    ])->name('admin.subject.delete');
 
     $router->get('/health', [
         \App\Controllers\Admin\HealthWebController::class, 'index'

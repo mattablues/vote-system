@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 return [
     'auth' => \App\Middlewares\Auth::class,
+    'voter.auth' => \App\Middlewares\VoterAuth::class,
+    'voter.quest' => \App\Middlewares\VoterGuest::class,
     'guest' => \App\Middlewares\Guest::class,
     'admin' => \App\Middlewares\Admin::class,
     'private' => \App\Middlewares\PrivateApp::class,

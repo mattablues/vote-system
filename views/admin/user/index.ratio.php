@@ -124,11 +124,11 @@
           </div>
           <!-- End Modal -->
 {% if($users['pagination']['total'] > $users['pagination']['per_page']) : %}
-          <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 mt-1">
             <span class="block text-xs font-medium text-gray-600">{{ $users['pagination']['total'] }} totalt</span>
             <span class="block text-xs font-medium text-gray-600">Sida {{ $users['pagination']['current_page'] }} av {{ calculate_total_pages($users['pagination']['total'], $users['pagination']['per_page']) }}</span>
           </div>
-          <div class="mt-2">
+          <div class="mt-3">
             {{ paginate_links($users['pagination'], 'admin.user.index', 2)|raw }}
           </div>
 {% endif; %}

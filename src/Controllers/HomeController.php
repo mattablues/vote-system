@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Models\User;
+use App\Models\Category;
+use App\Models\Subject;
 use Radix\Controller\AbstractController;
 use Radix\Http\Response;
 
@@ -12,24 +13,31 @@ class HomeController extends AbstractController
 {
     public function index(): Response
     {
-//        $this->viewer->registerFilter('lowercase', fn($value) => strtolower($value));
-//        $this->viewer->registerFilter('reverse', fn($value) => strrev($value));
-//        return $this->view('home.index', ['test' => 'Hello World']);
+        $subjects = Subject::with(['category'])
+            ->withCount('vote')
+            ->limit(4)
+            ->where('published', '=', 1)
+            ->orderBy('vote_count', 'desc')->get();
 
-//        $geoLocator = new GeoLocator();
-//
-//        $location = $geoLocator->getLocation(); // Hämta plats för besökaren
-//        echo "Land: " . ($location['country'] ?? 'Okänt');
-//        echo "Stad: " . ($location['city'] ?? 'Okänt');
-//
-//        // Hämta endast specifik data
-//        $country = $geoLocator->get('country', '85.228.5.49'); // För valfri IP
-//        echo "Land för 85.228.5.49: $country";
+        $latestSubjects = Subject::limit(3)
+            ->where('published', '=', 1)
+            ->orderBy('id', 'desc')->get();
 
-//        $search = User::search('ma', ['first_name', 'last_name', 'email']);
-//
-//        dd($search);
+        $categories = Category::withCount('subject')
+            ->withCount('subject')
+            ->withCount('vote')
+            ->limit(4)
+            ->orderBy('subject_count', 'desc')
+            ->orderBy('vote_count', 'desc')->get();
 
-        return $this->view('home.index');
+        $latestCategories = Category::limit(3)
+            ->orderBy('id', 'desc')->get();
+
+        return $this->view('home.index', [
+            'subjects' => $subjects,
+            'latestSubjects' => $latestSubjects,
+            'categories' => $categories,
+            'latestCategories' => $latestCategories,
+        ]);
     }
 }

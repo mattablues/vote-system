@@ -19,6 +19,22 @@ return [
             'priority' => 10,
         ],
     ],
+    \App\Events\VoterRegisteredEvent::class => [
+        [
+            'listener' => \App\EventListeners\SendVoterActivationEmailListener::class,
+            'type' => 'custom',
+            'dependencies' => [\Radix\Mailer\MailManager::class],
+            'priority' => 10,
+        ],
+    ],
+    \App\Events\CreateSubjectEvent::class => [
+        [
+            'listener' => \App\EventListeners\SendCreateSubjectEmailListener::class,
+            'type' => 'custom',
+            'dependencies' => [\Radix\Mailer\MailManager::class],
+            'priority' => 10,
+        ],
+    ],
     \App\Events\ContactFormEvent::class => [
         [
             'listener' => \App\EventListeners\SendContactEmailListener::class,
@@ -30,6 +46,13 @@ return [
     \App\Events\UserPasswordEvent::class => [
         [
             'listener' => \App\EventListeners\SendPasswordResetEmailListener::class,
+            'type' => 'custom',
+            'dependencies' => [\Radix\Mailer\MailManager::class],
+        ],
+    ],
+    \App\Events\VoterPasswordEvent::class => [
+        [
+            'listener' => \App\EventListeners\SendVoterPasswordResetEmailListener::class,
             'type' => 'custom',
             'dependencies' => [\Radix\Mailer\MailManager::class],
         ],
