@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace Database\Query;
 
+use Exception;
+use Generator;
+use InvalidArgumentException;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Radix\Database\Connection;
 use Radix\Database\QueryBuilder\QueryBuilder;
+use RuntimeException;
+use TypeError;
 
 class QueryBuilderTest extends TestCase
 {
@@ -17,8 +23,8 @@ class QueryBuilderTest extends TestCase
         parent::setUp();
 
         // Använd SQLite i minnet för testerna
-        $pdo = new \PDO('sqlite::memory:');
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $pdo = new PDO('sqlite::memory:');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $this->connection = new Connection($pdo);
     }
@@ -178,7 +184,7 @@ class QueryBuilderTest extends TestCase
             'QueryBuilder should bind the search query values correctly.'
         );
     }
-    
+
     public function testComplexConditions(): void
     {
         $query = (new QueryBuilder())
@@ -435,7 +441,7 @@ class QueryBuilderTest extends TestCase
 
     public function testUnionWithInvalidType(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
 
         $query = (new QueryBuilder())
             ->setConnection($this->connection)
@@ -558,7 +564,7 @@ class QueryBuilderTest extends TestCase
 
     public function testEmptyWhereClause(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         (new QueryBuilder())
             ->setConnection($this->connection)
@@ -567,7 +573,7 @@ class QueryBuilderTest extends TestCase
 
     public function testInsertWithEmptyData(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         (new QueryBuilder())->from('users')->insert([]);
     }
@@ -591,12 +597,12 @@ class QueryBuilderTest extends TestCase
         $query = (new QueryBuilder())->setConnection($mockConnection);
 
         // Verifiera att undantag kastas (för rollback)
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage("Simulated error");
 
         // Anropa metoden och simulera ett misslyckande
         $query->transaction(function () {
-            throw new \Exception("Simulated error");
+            throw new Exception("Simulated error");
         });
     }
 
@@ -700,7 +706,7 @@ class QueryBuilderTest extends TestCase
 
     public function testDeleteWithoutWhereThrowsException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("DELETE operation requires a WHERE clause.");
 
         $query = (new QueryBuilder())->from('users')->delete();
@@ -1053,10 +1059,10 @@ class QueryBuilderTest extends TestCase
             ->select(['u.email', 'totals.total'])
             ->join('totals', 'u.id', '=', 'totals.user_id');
 
-            $this->assertEquals(
-                'WITH `totals` AS (SELECT `user_id`, SUM(amount) AS `total` FROM `payments` GROUP BY `user_id`), `u` AS (SELECT `id`, `email` FROM `users`) SELECT `u`.`email`, `totals`.`total` FROM `u` INNER JOIN `totals` ON `u`.`id` = `totals`.`user_id`',
-                $q->toSql()
-            );
+        $this->assertEquals(
+            'WITH `totals` AS (SELECT `user_id`, SUM(amount) AS `total` FROM `payments` GROUP BY `user_id`), `u` AS (SELECT `id`, `email` FROM `users`) SELECT `u`.`email`, `totals`.`total` FROM `u` INNER JOIN `totals` ON `u`.`id` = `totals`.`user_id`',
+            $q->toSql()
+        );
         $this->assertEquals([], $q->getBindings());
     }
 
@@ -1187,7 +1193,10 @@ class QueryBuilderTest extends TestCase
             ->setConnection($this->connection)
             ->from('users')
             ->withCte('to_fix', $cte)
-            ->where('id', 'IN', (new QueryBuilder())
+            ->where(
+                'id',
+                'IN',
+                (new QueryBuilder())
                 ->setConnection($this->connection)
                 ->select(['id'])
                 ->from('to_fix')
@@ -1316,7 +1325,7 @@ class QueryBuilderTest extends TestCase
             ->where('id', '=', -9999)
             ->limit(1);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('No records found for firstOrFail().');
         $q->firstOrFail();
     }
@@ -1506,7 +1515,7 @@ class QueryBuilderTest extends TestCase
             ->orderBy('id');
 
         $gen = $q->lazy(2);
-        $this->assertInstanceOf(\Generator::class, $gen);
+        $this->assertInstanceOf(Generator::class, $gen);
 
         $collected = [];
         foreach ($gen as $m) {

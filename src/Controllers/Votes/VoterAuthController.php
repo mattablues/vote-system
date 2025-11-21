@@ -97,7 +97,7 @@ class VoterAuthController extends AbstractController
 
         $intended = is_string($intendedRaw) && $intendedRaw !== ''
             ? $intendedRaw
-            : route('home.index');
+            : route('votes.subject.index');
 
         return new RedirectResponse($intended);
     }

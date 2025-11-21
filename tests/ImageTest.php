@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Radix\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Radix\File\Image;
-use InvalidArgumentException;
 
 class ImageTest extends TestCase
 {

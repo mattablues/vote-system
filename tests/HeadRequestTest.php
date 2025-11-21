@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Radix\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Radix\Http\Request;
-use Radix\Http\Response;
-use Radix\Routing\Router;
-use Radix\Routing\Dispatcher;
 use Radix\Container\Container;
+use Radix\EventDispatcher\EventDispatcher;
+use Radix\Http\Request;
+use Radix\Http\RequestHandler;
+use Radix\Http\Response;
+use Radix\Routing\Dispatcher;
+use Radix\Routing\Router;
 use Radix\Session\SessionInterface;
 use Radix\Viewer\TemplateViewerInterface;
-use Radix\Http\RequestHandler;
-use Radix\EventDispatcher\EventDispatcher;
+use RuntimeException;
 
 class HeadRequestTest extends TestCase
 {
@@ -55,7 +56,7 @@ class HeadRequestTest extends TestCase
                 // Mocka RequestHandler
                 RequestHandler::class => $this->createMock(RequestHandler::class),
 
-                default => throw new \RuntimeException("Class $classname cannot be resolved"),
+                default => throw new RuntimeException("Class $classname cannot be resolved"),
             };
         });
 

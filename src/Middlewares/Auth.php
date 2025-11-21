@@ -6,6 +6,7 @@ namespace App\Middlewares;
 
 use App\Events\UserBlockedEvent;
 use App\Models\Status;
+use App\Models\User;
 use Radix\EventDispatcher\EventDispatcher;
 use Radix\Http\Exception\NotAuthorizedException;
 use Radix\Http\RedirectResponse;
@@ -13,13 +14,11 @@ use Radix\Http\Request;
 use Radix\Http\RequestHandlerInterface;
 use Radix\Http\Response;
 use Radix\Middleware\MiddlewareInterface;
-use App\Models\User;
 use Radix\Session\SessionInterface;
 
 readonly class Auth implements MiddlewareInterface
 {
-    public function __construct(private EventDispatcher $eventDispatcher) {
-    }
+    public function __construct(private EventDispatcher $eventDispatcher) {}
 
     public function process(Request $request, RequestHandlerInterface $next): Response
     {

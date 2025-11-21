@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Radix\Tests\Database\Migration;
 
+use InvalidArgumentException;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use Radix\Database\Migration\Blueprint;
 
@@ -17,12 +19,12 @@ class BlueprintTest extends TestCase
         $blueprint->integer('age', true);
         $blueprint->timestamps();
 
-        $expectedSql = "CREATE TABLE `users` (" .
-            "`name` VARCHAR(100) NOT NULL COMMENT 'User name', " .
-            "`age` INT UNSIGNED NOT NULL, " .
-            "`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, " .
-            "`updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `users` ("
+            . "`name` VARCHAR(100) NOT NULL COMMENT 'User name', "
+            . "`age` INT UNSIGNED NOT NULL, "
+            . "`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+            . "`updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            . ") DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
@@ -37,10 +39,10 @@ class BlueprintTest extends TestCase
         $blueprint->string('title', 255);
         $blueprint->text('content');
 
-        $expectedSql = "CREATE TABLE `posts` (" .
-            "`title` VARCHAR(255) NOT NULL, " .
-            "`content` TEXT NOT NULL" .
-            ") ENGINE=InnoDB AUTO_INCREMENT=10 COMMENT = 'Blog posts table.' DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `posts` ("
+            . "`title` VARCHAR(255) NOT NULL, "
+            . "`content` TEXT NOT NULL"
+            . ") ENGINE=InnoDB AUTO_INCREMENT=10 COMMENT = 'Blog posts table.' DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
@@ -55,13 +57,13 @@ class BlueprintTest extends TestCase
         $blueprint->index(['customer_id']);
         $blueprint->foreign('customer_id', 'customers', 'id');
 
-        $expectedSql = "CREATE TABLE `orders` (" .
-            "`id` INT UNSIGNED NOT NULL, " .
-            "PRIMARY KEY (`id`), " .
-            "UNIQUE INDEX `unique_order_number` (`order_number`), " .
-            "INDEX `index_customer_id` (`customer_id`), " .
-            "FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `orders` ("
+            . "`id` INT UNSIGNED NOT NULL, "
+            . "PRIMARY KEY (`id`), "
+            . "UNIQUE INDEX `unique_order_number` (`order_number`), "
+            . "INDEX `index_customer_id` (`customer_id`), "
+            . "FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE"
+            . ") DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
@@ -98,14 +100,14 @@ class BlueprintTest extends TestCase
         $blueprint->index(['category_id'], 'category_index');
         $blueprint->foreign('category_id', 'categories', 'id', 'SET NULL', 'CASCADE');
 
-        $expectedSql = "CREATE TABLE `products` (" .
-            "`id` INT UNSIGNED NOT NULL, " .
-            "`sku` VARCHAR(255) NOT NULL, " .
-            "PRIMARY KEY (`id`), " .
-            "UNIQUE INDEX `unique_sku` (`sku`), " .
-            "INDEX `category_index` (`category_id`), " .
-            "FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `products` ("
+            . "`id` INT UNSIGNED NOT NULL, "
+            . "`sku` VARCHAR(255) NOT NULL, "
+            . "PRIMARY KEY (`id`), "
+            . "UNIQUE INDEX `unique_sku` (`sku`), "
+            . "INDEX `category_index` (`category_id`), "
+            . "FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE"
+            . ") DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
@@ -122,14 +124,14 @@ class BlueprintTest extends TestCase
         $blueprint->enum('role', ['admin', 'user', 'guest']); // ENUM
         $blueprint->json('settings'); // JSON
 
-        $expectedSql = "CREATE TABLE `attributes` (" .
-            "`status` TINYINT UNSIGNED NOT NULL, " .
-            "`score` BIGINT NOT NULL, " .
-            "`is_active` TINYINT(1) NOT NULL, " .
-            "`rating` FLOAT(10, 2) NOT NULL, " . // FLOAT(10, 2) stöds nu
-            "`role` ENUM('admin', 'user', 'guest') NOT NULL, " .
-            "`settings` JSON NOT NULL" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `attributes` ("
+            . "`status` TINYINT UNSIGNED NOT NULL, "
+            . "`score` BIGINT NOT NULL, "
+            . "`is_active` TINYINT(1) NOT NULL, "
+            . "`rating` FLOAT(10, 2) NOT NULL, " // FLOAT(10, 2) stöds nu
+            . "`role` ENUM('admin', 'user', 'guest') NOT NULL, "
+            . "`settings` JSON NOT NULL"
+            . ") DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
@@ -141,18 +143,18 @@ class BlueprintTest extends TestCase
         // Testa en boolean-standard (true)
         $blueprint->boolean('is_active', ['default' => true]);
 
-        $expectedSqlTrue = "CREATE TABLE `test_table` (" .
-            "`is_active` TINYINT(1) NOT NULL DEFAULT '1'" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSqlTrue = "CREATE TABLE `test_table` ("
+            . "`is_active` TINYINT(1) NOT NULL DEFAULT '1'"
+            . ") DEFAULT CHARSET=utf8mb4;";
         $this->assertEquals($expectedSqlTrue, $blueprint->toSql());
 
         // Testa en boolean-standard (false)
         $blueprint = new Blueprint('test_table');
         $blueprint->boolean('is_disabled', ['default' => false]);
 
-        $expectedSqlFalse = "CREATE TABLE `test_table` (" .
-            "`is_disabled` TINYINT(1) NOT NULL DEFAULT '0'" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSqlFalse = "CREATE TABLE `test_table` ("
+            . "`is_disabled` TINYINT(1) NOT NULL DEFAULT '0'"
+            . ") DEFAULT CHARSET=utf8mb4;";
         $this->assertEquals($expectedSqlFalse, $blueprint->toSql());
     }
 
@@ -166,10 +168,10 @@ class BlueprintTest extends TestCase
         $blueprint->integer('id', true);
         $blueprint->string('message', 500);
 
-        $expectedSql = "CREATE TABLE `logs` (" .
-            "`id` INT UNSIGNED NOT NULL, " .
-            "`message` VARCHAR(500) NOT NULL" .
-            ") ENGINE=InnoDB AUTO_INCREMENT=500 COMMENT = 'Table for storing application logs.' DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `logs` ("
+            . "`id` INT UNSIGNED NOT NULL, "
+            . "`message` VARCHAR(500) NOT NULL"
+            . ") ENGINE=InnoDB AUTO_INCREMENT=500 COMMENT = 'Table for storing application logs.' DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
@@ -193,7 +195,7 @@ class BlueprintTest extends TestCase
             "ALTER TABLE `users` DROP COLUMN `age`;",
             "ALTER TABLE `users` DROP PRIMARY KEY;",
             "ALTER TABLE `users` ADD PRIMARY KEY (`id`, `email`);",
-            "ALTER TABLE `users` ADD FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;"
+            "ALTER TABLE `users` ADD FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;",
         ];
 
         // Kontrollera att genererad SQL matchar förväntad SQL
@@ -202,7 +204,7 @@ class BlueprintTest extends TestCase
 
     public function testDropColumnOutsideAlterContext(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('dropColumn can only be used in ALTER TABLE context.');
 
         $blueprint = new Blueprint('users'); // Skapar ny tabell (ej ALTER)
@@ -252,9 +254,9 @@ class BlueprintTest extends TestCase
         // Kolumn utan längd och attribut
         $blueprint->string('name');
 
-        $expectedSql = "CREATE TABLE `defaults_table` (" .
-            "`name` VARCHAR(255) NOT NULL" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `defaults_table` ("
+            . "`name` VARCHAR(255) NOT NULL"
+            . ") DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
@@ -272,7 +274,7 @@ class BlueprintTest extends TestCase
             "ALTER TABLE `users` ADD COLUMN `nickname` VARCHAR(255) NULL;",
             "ALTER TABLE `users` DROP COLUMN `age`;",
             "ALTER TABLE `users` DROP PRIMARY KEY;",
-            "ALTER TABLE `users` ADD PRIMARY KEY (`id`, `nickname`);"
+            "ALTER TABLE `users` ADD PRIMARY KEY (`id`, `nickname`);",
         ];
 
         $this->assertEquals($expectedSql, $blueprint->toAlterSql());
@@ -285,17 +287,17 @@ class BlueprintTest extends TestCase
         $blueprint->integer('user_id');
         $blueprint->foreign('user_id', 'users', 'id', 'SET DEFAULT', 'NO ACTION');
 
-        $expectedSql = "CREATE TABLE `orders` (" .
-            "`user_id` INT NOT NULL, " .
-            "FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET DEFAULT ON UPDATE NO ACTION" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `orders` ("
+            . "`user_id` INT NOT NULL, "
+            . "FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET DEFAULT ON UPDATE NO ACTION"
+            . ") DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
 
     public function testRollbackAlterChanges(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot rollback a dropped column automatically. Column details are missing.');
 
         $blueprint = new Blueprint('users', true);
@@ -317,9 +319,9 @@ class BlueprintTest extends TestCase
 
         $blueprint->expects($this->once())
                   ->method('addColumn')
-                  ->will($this->throwException(new \InvalidArgumentException("Unsupported column type: 'invalid_type'")));
+                  ->will($this->throwException(new InvalidArgumentException("Unsupported column type: 'invalid_type'")));
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Unsupported column type: 'invalid_type'");
 
         $blueprint->addColumn('invalid_type', 'unknown_column');
@@ -327,7 +329,7 @@ class BlueprintTest extends TestCase
 
     public function testInvalidColumnAttributesThrowException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Unsupported column attribute: 'invalid_attribute'");
 
         $blueprint = new Blueprint('users');
@@ -362,7 +364,7 @@ class BlueprintTest extends TestCase
         $expectedSql = [
             "ALTER TABLE `users` DROP COLUMN `age`;",
             "ALTER TABLE `users` DROP COLUMN `address`;",
-            "ALTER TABLE `users` DROP COLUMN `phone_number`;"
+            "ALTER TABLE `users` DROP COLUMN `phone_number`;",
         ];
 
         $this->assertEquals($expectedSql, $blueprint->toAlterSql());
@@ -377,12 +379,12 @@ class BlueprintTest extends TestCase
         $blueprint->boolean('is_active');
         $blueprint->uuid('identifier');
 
-        $expectedSql = "CREATE TABLE `data_types` (" .
-            "`name` VARCHAR(255) NOT NULL, " .
-            "`age` INT UNSIGNED NULL, " .
-            "`is_active` TINYINT(1) NOT NULL, " .
-            "`identifier` CHAR(36) NOT NULL" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `data_types` ("
+            . "`name` VARCHAR(255) NOT NULL, "
+            . "`age` INT UNSIGNED NULL, "
+            . "`is_active` TINYINT(1) NOT NULL, "
+            . "`identifier` CHAR(36) NOT NULL"
+            . ") DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
@@ -396,7 +398,7 @@ class BlueprintTest extends TestCase
         $rollbackSql = $blueprint->toRollbackSql();
 
         $expectedRollback = [
-            "ALTER TABLE `users` DROP COLUMN `nickname`;"
+            "ALTER TABLE `users` DROP COLUMN `nickname`;",
         ];
 
         $this->assertEquals($expectedRollback, $rollbackSql);
@@ -410,7 +412,7 @@ class BlueprintTest extends TestCase
 
         $expectedSql = [
             "ALTER TABLE `users` DROP PRIMARY KEY;",
-            "ALTER TABLE `users` ADD PRIMARY KEY (`id`, `email`);"
+            "ALTER TABLE `users` ADD PRIMARY KEY (`id`, `email`);",
         ];
 
         $this->assertEquals($expectedSql, $blueprint->toAlterSql());
@@ -418,7 +420,7 @@ class BlueprintTest extends TestCase
 
     public function testRollbackWithoutChanges(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No operations to rollback.');
 
         $blueprint = new Blueprint('users', true);
@@ -428,7 +430,7 @@ class BlueprintTest extends TestCase
 
     public function testRollbackDropColumn(): void
     {
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot rollback a dropped column automatically. Column details are missing.');
 
         $blueprint = new Blueprint('users', true);
@@ -445,17 +447,17 @@ class BlueprintTest extends TestCase
         $blueprint->integer('user_id');
         $blueprint->foreign('user_id', 'users', 'id', 'SET NULL', 'CASCADE');
 
-        $expectedSql = "CREATE TABLE `orders` (" .
-            "`user_id` INT NOT NULL, " .
-            "FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE" .
-            ") DEFAULT CHARSET=utf8mb4;";
+        $expectedSql = "CREATE TABLE `orders` ("
+            . "`user_id` INT NOT NULL, "
+            . "FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE"
+            . ") DEFAULT CHARSET=utf8mb4;";
 
         $this->assertEquals($expectedSql, $blueprint->toSql());
     }
 
     public function testInvalidColumnAttributes(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Unsupported column attribute: 'random_attribute'");
 
         $blueprint = new Blueprint('users');
@@ -464,7 +466,7 @@ class BlueprintTest extends TestCase
 
     public function testInvalidColumnType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Unsupported column type: 'invalid_type'");
 
         $blueprint = new Blueprint('users');
@@ -478,9 +480,9 @@ class BlueprintTest extends TestCase
 
         $blueprint->expects($this->once())
                   ->method('addColumn')
-                  ->will($this->throwException(new \InvalidArgumentException("Unsupported column type: 'invalid_type'")));
+                  ->will($this->throwException(new InvalidArgumentException("Unsupported column type: 'invalid_type'")));
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Unsupported column type: 'invalid_type'");
 
         $blueprint->addColumn('invalid_type', 'unknown_column');

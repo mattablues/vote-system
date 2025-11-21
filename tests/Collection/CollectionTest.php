@@ -106,7 +106,7 @@ class CollectionTest extends TestCase
 
     public function testPluckOnArraysAndObjects(): void
     {
-        $obj = (object)['id' => 2, 'name' => 'Bob'];
+        $obj = (object) ['id' => 2, 'name' => 'Bob'];
         $c = new Collection([
             ['id' => 1, 'name' => 'Alice'],
             $obj,

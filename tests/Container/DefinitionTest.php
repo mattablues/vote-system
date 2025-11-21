@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Radix\Tests\Container;
 
-use PHPUnit\Framework\TestCase;
-use Radix\Container\Definition;
 use InvalidArgumentException;
 use OutOfBoundsException;
+use PHPUnit\Framework\TestCase;
+use Radix\Container\Definition;
 
 class DefinitionTest extends TestCase
 {

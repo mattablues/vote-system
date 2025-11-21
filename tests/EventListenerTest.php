@@ -131,7 +131,7 @@ class EventListenerTest extends TestCase
         );
     }
 
-public function testEventDispatcherCallsListeners(): void
+    public function testEventDispatcherCallsListeners(): void
     {
         putenv('APP_ENV=development');
         putenv('CORS_ENABLED=1');

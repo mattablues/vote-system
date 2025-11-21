@@ -6,8 +6,8 @@ namespace App\Middlewares;
 
 use Radix\Http\Exception\PageNotFoundException;
 use Radix\Http\Request;
-use Radix\Http\Response;
 use Radix\Http\RequestHandlerInterface;
+use Radix\Http\Response;
 use Radix\Middleware\MiddlewareInterface;
 
 class PrivateApp implements MiddlewareInterface

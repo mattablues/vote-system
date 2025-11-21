@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Radix\Tests\Support;
 
 use PHPUnit\Framework\TestCase;
-use Radix\Support\GeoLocator;
 use Radix\Http\Exception\GeoLocatorException;
+use Radix\Support\GeoLocator;
+use ReflectionClass;
 
 class GeoLocatorTest extends TestCase
 {
@@ -27,7 +28,7 @@ class GeoLocatorTest extends TestCase
         $geoLocator = new GeoLocator();
 
         // Mocka ett nätverksfel genom att ändra baseUrl
-        $reflection = new \ReflectionClass($geoLocator);
+        $reflection = new ReflectionClass($geoLocator);
         $property = $reflection->getProperty('baseUrl');
         $property->setValue($geoLocator, 'http://nonexistent-domain.test');
 

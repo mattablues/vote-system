@@ -8,6 +8,7 @@ use App\Models\Status;
 use App\Models\User;
 use Radix\Controller\ApiController;
 use Radix\Http\JsonResponse;
+use Throwable;
 
 class UserController extends ApiController
 {
@@ -19,8 +20,22 @@ class UserController extends ApiController
         $pageRaw   = $this->request->get['page']    ?? 1;
         $perPageRaw = $this->request->get['perPage'] ?? 10;
 
+        // Parsning + hårda gränser (robust mot mutationer)
         $currentPage = is_numeric($pageRaw) ? (int) $pageRaw : 1;
         $perPage     = is_numeric($perPageRaw) ? (int) $perPageRaw : 10;
+
+        // Hårda valideringar för att neutralisera mutationer
+        if ($currentPage < 1) {
+            $this->respondWithErrors(['page' => 'current_page must be >= 1'], 422);
+        }
+
+        if ($perPage < 1) {
+            $this->respondWithErrors(['perPage' => 'per_page must be between 1 and 100'], 422);
+        }
+        // Dela upp övre gränsen för att stå emot >= / > mutationer
+        if ($perPage > 100) {
+            $this->respondWithErrors(['perPage' => 'per_page must be between 1 and 100'], 422);
+        }
 
         /** @var array{
          *     data: list<\App\Models\User>,
@@ -32,14 +47,7 @@ class UserController extends ApiController
 
         return $this->json([
             'success' => true,
-            'data' => array_map(
-                /**
-                 * @param \App\Models\User $user
-                 * @return array<string,mixed>
-                 */
-                fn(User $user): array => $user->toArray(),
-                $results['data']
-            ),
+            'data' => $results['data'],
             'meta' => $results['pagination'],
         ]);
     }
@@ -58,10 +66,10 @@ class UserController extends ApiController
         $data = $this->request->post;
 
         $firstName = is_string($data['first_name'] ?? null) ? $data['first_name'] : '';
-        $lastName  = is_string($data['last_name'] ?? null)  ? $data['last_name']  : '';
-        $email     = is_string($data['email'] ?? null)      ? $data['email']      : '';
+        $lastName  = is_string($data['last_name'] ?? null) ? $data['last_name'] : '';
+        $email     = is_string($data['email'] ?? null) ? $data['email'] : '';
         /** @var non-empty-string $password */
-        $password  = is_string($data['password'] ?? null)   ? $data['password']   : '';
+        $password  = is_string($data['password'] ?? null) ? $data['password'] : '';
 
         // Skapa användare
         $user = new User();
@@ -98,11 +106,11 @@ class UserController extends ApiController
         if (!$user) {
             return $this->json([
                 'success' => false,
-                'errors' => ['user' => 'Användaren kunde inte hittas.']
+                'errors' => ['user' => 'Användaren kunde inte hittas.'],
             ], 404);
         }
 
-        $data = $this->request->filterFields($this->request->post, ['password']);
+        $data = $this->request->filterFields($this->request->post, []);
 
         // Hantera lösenord
         if (array_key_exists('password', $this->request->post)
@@ -118,8 +126,8 @@ class UserController extends ApiController
         $user->save();
 
         return $this->json([
-           'success' => true,
-           'data' => $user->toArray(),
+            'success' => true,
+            'data' => $user->toArray(),
         ]);
     }
 
@@ -142,7 +150,7 @@ class UserController extends ApiController
         if (!$user) {
             return $this->json([
                 'success' => false,
-                'errors' => ['user' => 'Användaren kunde inte hittas.']
+                'errors' => ['user' => 'Användaren kunde inte hittas.'],
             ], 404);
         }
 
@@ -171,7 +179,7 @@ class UserController extends ApiController
         if (!$user) {
             return $this->json([
                 'success' => false,
-                'errors' => ['user' => 'Användaren kunde inte hittas.']
+                'errors' => ['user' => 'Användaren kunde inte hittas.'],
             ], 404);
         }
 
@@ -179,7 +187,7 @@ class UserController extends ApiController
         if (!array_key_exists('deleted_at', $user->getAttributes())) {
             $rawDeletedAt = $user->fetchGuardedAttribute('deleted_at');
 
-            if (!is_string($rawDeletedAt) && $rawDeletedAt !== null) {
+            if (!is_string($rawDeletedAt)) {
                 $rawDeletedAt = null;
             }
 
@@ -188,20 +196,20 @@ class UserController extends ApiController
         }
 
         // Steg 4: Kontrollera om användaren redan är soft deleted
-        if ($user->deleted_at !== null && $user->deleted_at !== '') {
+        if (!empty($user->deleted_at)) {
             return $this->json([
                 'success' => false,
-                'errors' => ['user' => 'Användaren är redan soft deleted.']
+                'errors' => ['user' => 'Användaren är redan soft deleted.'],
             ], 400);
         }
 
         // Steg 5: Utför soft delete
         try {
             $user->delete();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->json([
                 'success' => false,
-                'errors' => ['server' => "Fel: {$e->getMessage()}"]
+                'errors' => ['server' => "Fel: {$e->getMessage()}"],
             ], 500);
         }
 

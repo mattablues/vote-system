@@ -2,47 +2,68 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-      - master
-      - develop
+    branches: [main, master, develop]
   pull_request:
+  schedule:
+    - cron: "0 2 * * *"
+
+env:
+  ENABLE_FRONTEND_BUILD: ${{ vars.ENABLE_FRONTEND_BUILD || '1' }}
+  ENABLE_INFECTION_ON_PR: ${{ vars.ENABLE_INFECTION_ON_PR || '1' }}
 
 jobs:
   php:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           coverage: none
           extensions: pdo_mysql, pdo_sqlite
           tools: composer
-
-      - name: Validate composer.json
-        run: composer validate --no-check-publish
-
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
+      - run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: Set up Node
+        if: env.ENABLE_FRONTEND_BUILD == '1'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Install NPM dependencies
-        run: npm install
-
+      - name: Install NPM deps
+        if: env.ENABLE_FRONTEND_BUILD == '1'
+        run: npm ci
       - name: Build assets
+        if: env.ENABLE_FRONTEND_BUILD == '1'
         run: npm run start:build
 
-      - name: Run PHPStan
-        run: composer stan
+      - run: composer format:check
+      - run: composer stan
+      - run: composer test
 
-      - name: Run PHPUnit
-        run: composer test
+  infection:
+    # Använd vars.* här istället för env.*
+    if: (github.event_name == 'pull_request' && (vars.ENABLE_INFECTION_ON_PR || '1') == '1') || github.event_name == 'schedule'
+    needs: php
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: xdebug
+          tools: composer
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Run Infection (quick on PR)
+        if: github.event_name == 'pull_request'
+        run: |
+          vendor/bin/infection --threads=$(nproc) --min-msi=80 --min-covered-msi=90 --log-verbosity=default --no-progress
+      - name: Run Infection (full on schedule)
+        if: github.event_name == 'schedule'
+        run: |
+          vendor/bin/infection --threads=$(nproc) --min-msi=85 --min-covered-msi=95 --show-mutations --logger-html=infection-report.html
+      - name: Upload Infection report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: infection-report
+          path: infection-report.html

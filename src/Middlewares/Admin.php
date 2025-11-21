@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
+use App\Models\User;
 use Radix\Http\Exception\NotAuthorizedException;
-use Radix\Middleware\MiddlewareInterface;
 use Radix\Http\Request;
 use Radix\Http\RequestHandlerInterface;
 use Radix\Http\Response;
+use Radix\Middleware\MiddlewareInterface;
 use Radix\Session\Session;
-use App\Models\User;
 
 readonly class Admin implements MiddlewareInterface
 {

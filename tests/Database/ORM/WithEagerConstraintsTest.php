@@ -140,7 +140,7 @@ class WithEagerConstraintsTest extends TestCase
             ->with([
                 'posts' => function (\Radix\Database\QueryBuilder\QueryBuilder $q) {
                     $q->where('status', '=', 'published')->orderBy('id', 'ASC');
-                }
+                },
             ])
             ->get();
 
@@ -181,7 +181,7 @@ class WithEagerConstraintsTest extends TestCase
             ->with([
                 'roles' => function (\Radix\Database\QueryBuilder\QueryBuilder $q) {
                     $q->where('status', '=', 'active')->orderBy('id', 'ASC');
-                }
+                },
             ])
             ->get();
 

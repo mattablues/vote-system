@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Radix\Tests\Container;
 
+use Countable;
 use PHPUnit\Framework\TestCase;
 use Radix\Container\Container;
 use Radix\Container\Definition;
 use Radix\Container\Exception\ContainerDependencyInjectionException;
 use Radix\Container\Exception\ContainerNotFoundException;
+use stdClass;
 
 class ContainerTest extends TestCase
 {
     public function testAddAndGetService(): void
     {
         $container = new Container();
-        $object = new \stdClass();
+        $object = new stdClass();
 
         $container->add('test.service', $object);
         $retrievedService = $container->get('test.service');
@@ -26,7 +28,7 @@ class ContainerTest extends TestCase
     public function testHasService(): void
     {
         $container = new Container();
-        $container->add('test.service', new \stdClass());
+        $container->add('test.service', new stdClass());
 
         $this->assertTrue($container->has('test.service'));
         $this->assertFalse($container->has('non.existent.service'));
@@ -47,8 +49,8 @@ class ContainerTest extends TestCase
         $container = new Container();
 
         // Lägg till giltiga tjänster som kan aliasas
-        $container->add('alias1', new \stdClass());
-        $container->add('alias2', new \stdClass());
+        $container->add('alias1', new stdClass());
+        $container->add('alias2', new stdClass());
 
         // Skapa alias
         $container->setAlias('alias1', 'alias2');
@@ -65,7 +67,7 @@ class ContainerTest extends TestCase
     {
         $container = new Container();
         $container->addShared('shared.service', function () {
-            return new \stdClass();
+            return new stdClass();
         });
 
         $service1 = $container->get('shared.service');
@@ -78,7 +80,7 @@ class ContainerTest extends TestCase
     {
         $container = new Container();
         $container->add('non.shared.service', function () {
-            return new \stdClass();
+            return new stdClass();
         });
 
         $service1 = $container->get('non.shared.service');
@@ -90,7 +92,7 @@ class ContainerTest extends TestCase
     public function testSetDefinition(): void
     {
         $container = new Container();
-        $definition = new Definition(\stdClass::class);
+        $definition = new Definition(stdClass::class);
 
         $result = $container->setDefinition('test.service', $definition);
 
@@ -103,7 +105,7 @@ class ContainerTest extends TestCase
     {
         $container = new Container();
         $definitions = [
-            'service1' => new Definition(\stdClass::class),
+            'service1' => new Definition(stdClass::class),
             'service2' => new Definition(Container::class),
         ];
 
@@ -146,8 +148,8 @@ class ContainerTest extends TestCase
     public function testAddTagAndFindTaggedServiceIds(): void
     {
         $container = new Container();
-        $container->add('service1', new \stdClass());
-        $container->add('service2', new \stdClass());
+        $container->add('service1', new stdClass());
+        $container->add('service2', new stdClass());
 
         // Lägg till taggar på tjänster
         $container->addTag('service1', 'tag1', ['key' => 'value']);
@@ -166,7 +168,7 @@ class ContainerTest extends TestCase
     public function testValidAlias(): void
     {
         $container = new Container();
-        $service = new \stdClass();
+        $service = new stdClass();
 
         $container->add('actual.service', $service);
         $container->setAlias('alias.service', 'actual.service');
@@ -188,9 +190,9 @@ class ContainerTest extends TestCase
     {
         $container = new Container();
         // Ingen explicita registreringar här
-        $service = $container->get(\stdClass::class);
+        $service = $container->get(stdClass::class);
 
-        $this->assertInstanceOf(\stdClass::class, $service);
+        $this->assertInstanceOf(stdClass::class, $service);
     }
 
     public function testAutoRegisterAbstractClassThrowsException(): void
@@ -200,14 +202,14 @@ class ContainerTest extends TestCase
         $this->expectException(ContainerNotFoundException::class);
         $this->expectExceptionMessage('There is no definition named "Countable"');
 
-        $container->get(\Countable::class);
+        $container->get(Countable::class);
     }
 
     public function testGetNewAlwaysReturnsNewInstance(): void
     {
         $container = new Container();
         $container->addShared('shared.service', function () {
-            return new \stdClass();
+            return new stdClass();
         });
 
         $instance1 = $container->getNew('shared.service');
@@ -230,7 +232,7 @@ class ContainerTest extends TestCase
         $container = new Container();
         $container->setParameter('name', 'Radix');
 
-        $container->add('greeting.service', function (Container $c): \stdClass {
+        $container->add('greeting.service', function (Container $c): stdClass {
             $name = $c->getParameter('name');
 
             if (!is_string($name)) {
@@ -238,7 +240,7 @@ class ContainerTest extends TestCase
             }
 
             /** @var string $name */
-            $service = new \stdClass();
+            $service = new stdClass();
             $service->greeting = sprintf('Hello, %s!', $name);
 
             return $service;
@@ -247,7 +249,7 @@ class ContainerTest extends TestCase
         $service = $container->get('greeting.service');
 
         // Narrowa typen för PHPStan
-        assert($service instanceof \stdClass);
+        assert($service instanceof stdClass);
 
         $this->assertSame('Hello, Radix!', $service->greeting);
     }
@@ -257,15 +259,15 @@ class ContainerTest extends TestCase
         $container = new Container();
 
         // Registrera och tagga tjänster
-        $container->add('service1', new \stdClass())->addTag('process');
-        $container->add('service2', new \stdClass())->addTag('process');
-        $container->add('service3', new \stdClass());
+        $container->add('service1', new stdClass())->addTag('process');
+        $container->add('service2', new stdClass())->addTag('process');
+        $container->add('service3', new stdClass());
 
         // Hämta och loopa genom taggade tjänster
         $taggedServices = $container->findTaggedServiceIds('process');
         foreach ($taggedServices as $serviceId => $tags) {
             $service = $container->get($serviceId);
-            $this->assertInstanceOf(\stdClass::class, $service);
+            $this->assertInstanceOf(stdClass::class, $service);
         }
 
         $this->assertCount(2, $taggedServices); // Endast 2 är taggade med "process"
@@ -277,12 +279,12 @@ class ContainerTest extends TestCase
 
         $totalServices = 1000;
         for ($i = 0; $i < $totalServices; $i++) {
-            $container->add("service_$i", new \stdClass());
+            $container->add("service_$i", new stdClass());
         }
 
         for ($i = 0; $i < $totalServices; $i++) {
             $this->assertTrue($container->has("service_$i"));
-            $this->assertInstanceOf(\stdClass::class, $container->get("service_$i"));
+            $this->assertInstanceOf(stdClass::class, $container->get("service_$i"));
         }
     }
 }

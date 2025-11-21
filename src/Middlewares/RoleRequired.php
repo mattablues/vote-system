@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Middlewares;
 
 use App\Models\User;
+use InvalidArgumentException;
 use Radix\Http\Exception\NotAuthorizedException;
 use Radix\Http\Request;
 use Radix\Http\RequestHandlerInterface;
@@ -19,10 +20,10 @@ final readonly class RoleRequired implements MiddlewareInterface
         private ?string $min = null
     ) {
         if ($this->exact === null && $this->min === null) {
-            throw new \InvalidArgumentException('RoleRequired kräver exact eller min.');
+            throw new InvalidArgumentException('RoleRequired kräver exact eller min.');
         }
         if ($this->exact !== null && $this->min !== null) {
-            throw new \InvalidArgumentException('Ange antingen exact eller min, inte båda.');
+            throw new InvalidArgumentException('Ange antingen exact eller min, inte båda.');
         }
     }
 

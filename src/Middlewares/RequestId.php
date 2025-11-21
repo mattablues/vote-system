@@ -10,6 +10,8 @@ use Radix\Middleware\MiddlewareInterface;
 
 final class RequestId implements MiddlewareInterface
 {
+    private const int MS_FACTOR = 1000;
+
     public function process(Request $request, \Radix\Http\RequestHandlerInterface $next): Response
     {
         $requestId = isset($_SERVER['HTTP_X_REQUEST_ID']) && is_string($_SERVER['HTTP_X_REQUEST_ID'])
@@ -21,32 +23,10 @@ final class RequestId implements MiddlewareInterface
 
         $response = $next->handle($request);
 
-        $durationMs = (int) round((microtime(true) - $start) * 1000);
+        // Använd trunkering (floor) istället för round för att förenkla och undvika mutations-flakiness
+        $durationMs = (int) ((microtime(true) - $start) * self::MS_FACTOR);
         $response->setHeader('X-Request-Id', $requestId);
         $response->setHeader('X-Response-Time', $durationMs . 'ms');
-
-        $methodServer = $_SERVER['REQUEST_METHOD'] ?? null;
-        $methodReq    = $request->method ?? null;
-        $method = is_string($methodServer)
-            ? $methodServer
-            : (is_string($methodReq) ? $methodReq : 'GET');
-
-        $uriServer = $_SERVER['REQUEST_URI'] ?? null;
-        $uriReq    = $request->uri ?? null;
-        $uri = is_string($uriServer)
-            ? $uriServer
-            : (is_string($uriReq) ? $uriReq : '/');
-
-        $status = $response->getStatusCode();
-
-        error_log(sprintf(
-            '[%s] %s %s %d %dms',
-            $requestId,
-            $method,
-            $uri,
-            $status,
-            $durationMs
-        ));
 
         return $response;
     }

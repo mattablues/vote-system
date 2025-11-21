@@ -28,7 +28,7 @@ class ValidatorTest extends TestCase
             'search' => [
                 'term' => 'example',
                 'current_page' => 1,
-            ]
+            ],
         ];
 
         $validator = new Validator($data, $rules);
@@ -247,50 +247,50 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->validate(), 'Validering ska passera för password + confirmed.');
     }
 
-public function testPasswordNullableConfirmed(): void
-{
-    $data = [
-        'password' => null,
-        'password_confirmation' => null,
-    ];
+    public function testPasswordNullableConfirmed(): void
+    {
+        $data = [
+            'password' => null,
+            'password_confirmation' => null,
+        ];
 
-    $rules = [
-        'password_confirmation' => 'nullable|required_with:password|confirmed:password',
-    ];
+        $rules = [
+            'password_confirmation' => 'nullable|required_with:password|confirmed:password',
+        ];
 
-    $validator = new Validator($data, $rules);
-    $this->assertTrue($validator->validate(), 'Validering ska passera eftersom fields är nullable.');
-}
+        $validator = new Validator($data, $rules);
+        $this->assertTrue($validator->validate(), 'Validering ska passera eftersom fields är nullable.');
+    }
 
-public function testPasswordConfirmedFails(): void
-{
-    $data = [
-        'password' => 'secret123',
-        'password_confirmation' => 'wrong',
-    ];
+    public function testPasswordConfirmedFails(): void
+    {
+        $data = [
+            'password' => 'secret123',
+            'password_confirmation' => 'wrong',
+        ];
 
-    $rules = [
-        'password_confirmation' => 'nullable|required_with:password|confirmed:password',
-    ];
+        $rules = [
+            'password_confirmation' => 'nullable|required_with:password|confirmed:password',
+        ];
 
-    $validator = new Validator($data, $rules);
-    $this->assertFalse($validator->validate(), 'Valideringen ska misslyckas eftersom fält ej matchar.');
-}
+        $validator = new Validator($data, $rules);
+        $this->assertFalse($validator->validate(), 'Valideringen ska misslyckas eftersom fält ej matchar.');
+    }
 
-public function testPasswordConfirmedPasses(): void
-{
-    $data = [
-        'password' => 'secret123',
-        'password_confirmation' => 'secret123',
-    ];
+    public function testPasswordConfirmedPasses(): void
+    {
+        $data = [
+            'password' => 'secret123',
+            'password_confirmation' => 'secret123',
+        ];
 
-    $rules = [
-        'password_confirmation' => 'nullable|required_with:password|confirmed:password',
-    ];
+        $rules = [
+            'password_confirmation' => 'nullable|required_with:password|confirmed:password',
+        ];
 
-    $validator = new Validator($data, $rules);
-    $this->assertTrue($validator->validate(), 'Valideringen ska passera då fälten matchar.');
-}
+        $validator = new Validator($data, $rules);
+        $this->assertTrue($validator->validate(), 'Valideringen ska passera då fälten matchar.');
+    }
 
     public function testMaxRuleFails(): void
     {

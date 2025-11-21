@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace Radix\Tests\Container\Argument\Literal;
 
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use Radix\Container\Argument\Literal\ObjectArgument;
 use Radix\Container\Exception\ContainerInvalidArgumentException;
+use stdClass;
 
 class ObjectArgumentTest extends TestCase
 {
     public function testConstructorValidObject(): void
     {
-        $object = new ObjectArgument(new \stdClass());
-        $this->assertInstanceOf(\stdClass::class, $object->getValue());
+        $object = new ObjectArgument(new stdClass());
+        $this->assertInstanceOf(stdClass::class, $object->getValue());
     }
 
     public function testIsInstanceOf(): void
     {
-        $objectArgument = new ObjectArgument(new \DateTime());
-        $this->assertTrue($objectArgument->isInstanceOf(\DateTime::class));
-        $this->assertFalse($objectArgument->isInstanceOf(\stdClass::class));
+        $objectArgument = new ObjectArgument(new DateTime());
+        $this->assertTrue($objectArgument->isInstanceOf(DateTime::class));
+        $this->assertFalse($objectArgument->isInstanceOf(stdClass::class));
     }
 
     public function testToJson(): void
@@ -48,7 +50,7 @@ class ObjectArgumentTest extends TestCase
 
     public function testCallUndefinedMethodThrowsException(): void
     {
-        $object = new \stdClass();
+        $object = new stdClass();
         $objectArgument = new ObjectArgument($object);
 
         $this->expectException(ContainerInvalidArgumentException::class);

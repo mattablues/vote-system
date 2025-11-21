@@ -184,7 +184,7 @@ class BelongsToManyPivotTest extends TestCase
         /** @var array<int, array{role_id:int, user_id:int, note: ?string}> $rows */
         $rows = $this->conn->fetchAll("SELECT * FROM role_user WHERE role_id = 1");
         $this->assertCount(1, $rows);
-        $this->assertSame(2, (int)$rows[0]['user_id']);
+        $this->assertSame(2, (int) $rows[0]['user_id']);
 
         // Ta bort alla kvar
         $rel->detach();
@@ -219,9 +219,9 @@ class BelongsToManyPivotTest extends TestCase
         /** @var array<int, array{role_id:int, user_id:int, note: ?string}> $rows */
         $rows = $this->conn->fetchAll("SELECT * FROM role_user WHERE role_id = 2 ORDER BY user_id ASC");
         $this->assertCount(2, $rows);
-        $this->assertSame(2, (int)$rows[0]['user_id']);
+        $this->assertSame(2, (int) $rows[0]['user_id']);
         $this->assertSame('new2', $rows[0]['note']);
-        $this->assertSame(3, (int)$rows[1]['user_id']);
+        $this->assertSame(3, (int) $rows[1]['user_id']);
         $this->assertSame('new3', $rows[1]['note']);
     }
 
@@ -251,9 +251,9 @@ class BelongsToManyPivotTest extends TestCase
         /** @var array<int, array{role_id:int, user_id:int, note: ?string}> $rows */
         $rows = $this->conn->fetchAll("SELECT * FROM role_user WHERE role_id = 1 ORDER BY user_id ASC");
         $this->assertCount(2, $rows);
-        $this->assertSame(1, (int)$rows[0]['user_id']);
+        $this->assertSame(1, (int) $rows[0]['user_id']);
         $this->assertSame('updated', $rows[0]['note']);
-        $this->assertSame(2, (int)$rows[1]['user_id']);
+        $this->assertSame(2, (int) $rows[1]['user_id']);
         $this->assertSame('added', $rows[1]['note']);
     }
 

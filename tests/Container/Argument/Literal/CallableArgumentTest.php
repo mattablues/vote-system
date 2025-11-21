@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Radix\Tests\Container\Argument\Literal;
 
 use PHPUnit\Framework\TestCase;
-
 use Radix\Container\Argument\Literal\CallableArgument;
 use Radix\Container\Exception\ContainerInvalidArgumentException;
 

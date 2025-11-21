@@ -6,6 +6,7 @@ namespace Radix\Tests\Viewer;
 
 use PHPUnit\Framework\TestCase;
 use Radix\Viewer\RadixTemplateViewer;
+use ReflectionClass;
 use RuntimeException;
 
 class RadixTemplateViewerTest extends TestCase
@@ -47,7 +48,9 @@ class RadixTemplateViewerTest extends TestCase
     public function testAdvancedAlertComponent(): void
     {
         $componentPath = "{$this->tempViewsPath}components/alert.ratio.php";
-        file_put_contents($componentPath, '
+        file_put_contents(
+            $componentPath,
+            '
             <div class="alert alert-{{ $type }} {{ $class ?? \'\' }}" style="{{ $style ?? \'\' }}">
                 {% if(isset($header)) : %}
                     <div class="alert-header">{{ $header }}</div>
@@ -62,7 +65,9 @@ class RadixTemplateViewerTest extends TestCase
         $this->assertFileExists($componentPath, '[DEBUG] Komponentfilen saknas: ' . $componentPath);
 
         $templatePath = "{$this->tempViewsPath}test_template.ratio.php";
-        file_put_contents($templatePath, '
+        file_put_contents(
+            $templatePath,
+            '
             <x-alert type="warning" class="my-4" style="color: red;">
                 <x-slot:header>This is the header</x-slot:header>
                 This is the alert content.
@@ -272,62 +277,62 @@ class RadixTemplateViewerTest extends TestCase
         );
     }
 
-public function testCacheInvalidation(): void
-        {
-            // Tvinga cache-läge
-            $originalEnv = getenv('APP_ENV');
-            putenv('APP_ENV=production');
+    public function testCacheInvalidation(): void
+    {
+        // Tvinga cache-läge
+        $originalEnv = getenv('APP_ENV');
+        putenv('APP_ENV=production');
 
-            // Steg 1: Simulera cache-lagring
-            $templatePath = $this->tempViewsPath . 'invalidate_test/template.ratio.php';
-            $this->createDirectoryIfNotExists(dirname($templatePath));
-            file_put_contents($templatePath, 'Hello {{ $name }}');
+        // Steg 1: Simulera cache-lagring
+        $templatePath = $this->tempViewsPath . 'invalidate_test/template.ratio.php';
+        $this->createDirectoryIfNotExists(dirname($templatePath));
+        file_put_contents($templatePath, 'Hello {{ $name }}');
 
-            $reflection = new \ReflectionClass($this->viewer);
-            $resolveTemplatePath = $reflection->getMethod('resolveTemplatePath');
-            $resolveTemplatePath->setAccessible(true);
-            $generateCacheKey = $reflection->getMethod('generateCacheKey');
-            $generateCacheKey->setAccessible(true);
+        $reflection = new ReflectionClass($this->viewer);
+        $resolveTemplatePath = $reflection->getMethod('resolveTemplatePath');
+        $resolveTemplatePath->setAccessible(true);
+        $generateCacheKey = $reflection->getMethod('generateCacheKey');
+        $generateCacheKey->setAccessible(true);
 
-            // Pekar cache till tempRootPath/cache/views/
-            $cachePathProperty = $reflection->getProperty('cachePath');
-            $cachePathProperty->setAccessible(true);
-            $adjustedCachePath = $this->tempRootPath . 'cache/views/';
-            $cachePathProperty->setValue($this->viewer, $adjustedCachePath);
-            $this->createDirectoryIfNotExists($adjustedCachePath);
+        // Pekar cache till tempRootPath/cache/views/
+        $cachePathProperty = $reflection->getProperty('cachePath');
+        $cachePathProperty->setAccessible(true);
+        $adjustedCachePath = $this->tempRootPath . 'cache/views/';
+        $cachePathProperty->setValue($this->viewer, $adjustedCachePath);
+        $this->createDirectoryIfNotExists($adjustedCachePath);
 
-            $resolvedTemplatePath = $resolveTemplatePath->invoke($this->viewer, 'invalidate_test/template');
-            $data = ['name' => 'InitialName'];
-            $cacheKey = $generateCacheKey->invoke($this->viewer, $resolvedTemplatePath, $data);
+        $resolvedTemplatePath = $resolveTemplatePath->invoke($this->viewer, 'invalidate_test/template');
+        $data = ['name' => 'InitialName'];
+        $cacheKey = $generateCacheKey->invoke($this->viewer, $resolvedTemplatePath, $data);
 
-            if (!is_string($cacheKey)) {
-                $this->fail('cacheKey() must return string.');
-            }
-
-            /** @var string $cacheKey */
-            $cachedFile = "$adjustedCachePath{$cacheKey}.php";
-
-            // Rendera → cache ska skapas
-            $this->viewer->render('invalidate_test/template', $data);
-            $this->assertFileExists($cachedFile, "DEBUG: Cache file not created at expected path: {$cachedFile}");
-
-            // Steg 2: Invalidera cachen
-            $this->viewer->invalidateCache('invalidate_test/template', $data);
-            $this->assertFileDoesNotExist($cachedFile, "DEBUG: Cache file was not deleted at path: {$cachedFile}");
-
-            // Steg 3: Rendera om (med uppdaterad data)
-            file_put_contents($templatePath, 'Hello {{ $name }}'); // säkerställ att template finns kvar
-            $updatedData = ['name' => 'UpdatedName'];
-            $output = $this->viewer->render('invalidate_test/template', $updatedData);
-            $this->assertSame('Hello UpdatedName', $output);
-
-            // Återställ APP_ENV
-            if ($originalEnv === false) {
-                putenv('APP_ENV');
-            } else {
-                putenv('APP_ENV=' . $originalEnv);
-            }
+        if (!is_string($cacheKey)) {
+            $this->fail('cacheKey() must return string.');
         }
+
+        /** @var string $cacheKey */
+        $cachedFile = "$adjustedCachePath{$cacheKey}.php";
+
+        // Rendera → cache ska skapas
+        $this->viewer->render('invalidate_test/template', $data);
+        $this->assertFileExists($cachedFile, "DEBUG: Cache file not created at expected path: {$cachedFile}");
+
+        // Steg 2: Invalidera cachen
+        $this->viewer->invalidateCache('invalidate_test/template', $data);
+        $this->assertFileDoesNotExist($cachedFile, "DEBUG: Cache file was not deleted at path: {$cachedFile}");
+
+        // Steg 3: Rendera om (med uppdaterad data)
+        file_put_contents($templatePath, 'Hello {{ $name }}'); // säkerställ att template finns kvar
+        $updatedData = ['name' => 'UpdatedName'];
+        $output = $this->viewer->render('invalidate_test/template', $updatedData);
+        $this->assertSame('Hello UpdatedName', $output);
+
+        // Återställ APP_ENV
+        if ($originalEnv === false) {
+            putenv('APP_ENV');
+        } else {
+            putenv('APP_ENV=' . $originalEnv);
+        }
+    }
 
     public function testRenderThrowsExceptionIfTemplateNotFound(): void
     {
@@ -406,7 +411,7 @@ public function testCacheInvalidation(): void
         $layoutPath = $this->tempViewsPath . 'layouts/main.ratio.php';
         $childPath = $this->tempViewsPath . 'home.ratio.php';
 
-        mkdir(dirname($layoutPath), 0755, true);
+        mkdir(dirname($layoutPath), 0o755, true);
         file_put_contents($layoutPath, '<html>{% yield body %}</html>');
         file_put_contents($childPath, '{% extends "layouts/main.ratio.php" %}{% block body %}<h1>Hello!</h1>{% endblock %}');
 
@@ -442,67 +447,67 @@ public function testCacheInvalidation(): void
     }
 
     public function testCachedTemplateIsUsedIfAvailable(): void
-        {
-            // Tvinga cache-läge
-            $originalEnv = getenv('APP_ENV');
-            putenv('APP_ENV=production');
+    {
+        // Tvinga cache-läge
+        $originalEnv = getenv('APP_ENV');
+        putenv('APP_ENV=production');
 
-            $mockCacheDir = $this->tempRootPath . 'cache/views/';
-            if (!is_dir($mockCacheDir)) {
-                mkdir($mockCacheDir, 0755, true);
-            }
-
-            $reflection = new \ReflectionClass($this->viewer);
-            $cachePathProperty = $reflection->getProperty('cachePath');
-            $cachePathProperty->setAccessible(true);
-            $cachePathProperty->setValue($this->viewer, $mockCacheDir);
-
-            $resolveTemplatePath = $reflection->getMethod('resolveTemplatePath');
-            $resolveTemplatePath->setAccessible(true);
-
-            $generateCacheKey = $reflection->getMethod('generateCacheKey');
-            $generateCacheKey->setAccessible(true);
-
-            $mockTemplateName = 'test_template_key';
-
-            // Skapa en minimal template-fil som render() kan hitta
-            $resolvedTemplatePath = $resolveTemplatePath->invoke($this->viewer, $mockTemplateName);
-
-            if (!is_string($resolvedTemplatePath)) {
-                $this->fail('resolvedTemplatePath() must return string.');
-            }
-
-            /** @var string $resolvedTemplatePath */
-            $templateFullPath = $this->tempViewsPath . $resolvedTemplatePath;
-
-            if (!is_dir(dirname($templateFullPath))) {
-                mkdir(dirname($templateFullPath), 0755, true);
-            }
-            file_put_contents($templateFullPath, '<div>ORIGINAL</div>');
-
-            $data = [];
-            $mockCacheKey = $generateCacheKey->invoke($this->viewer, $resolvedTemplatePath, $data);
-
-            if (!is_string($mockCacheKey)) {
-                $this->fail('generateCacheKey() must return string.');
-            }
-
-            /** @var string $mockCacheKey */
-            $mockCacheFile = $mockCacheDir . $mockCacheKey . '.php';
-
-            // Skapa cachefilen som ska användas
-            file_put_contents($mockCacheFile, '<div>Cached Content</div>');
-
-            $output = $this->viewer->render($mockTemplateName, $data);
-            $this->assertSame('<div>Cached Content</div>', $output, 'Cache användes inte korrekt.');
-
-            // Återställ APP_ENV
-            if ($originalEnv === false) {
-                putenv('APP_ENV');
-            } else {
-                putenv('APP_ENV=' . $originalEnv);
-            }
+        $mockCacheDir = $this->tempRootPath . 'cache/views/';
+        if (!is_dir($mockCacheDir)) {
+            mkdir($mockCacheDir, 0o755, true);
         }
+
+        $reflection = new ReflectionClass($this->viewer);
+        $cachePathProperty = $reflection->getProperty('cachePath');
+        $cachePathProperty->setAccessible(true);
+        $cachePathProperty->setValue($this->viewer, $mockCacheDir);
+
+        $resolveTemplatePath = $reflection->getMethod('resolveTemplatePath');
+        $resolveTemplatePath->setAccessible(true);
+
+        $generateCacheKey = $reflection->getMethod('generateCacheKey');
+        $generateCacheKey->setAccessible(true);
+
+        $mockTemplateName = 'test_template_key';
+
+        // Skapa en minimal template-fil som render() kan hitta
+        $resolvedTemplatePath = $resolveTemplatePath->invoke($this->viewer, $mockTemplateName);
+
+        if (!is_string($resolvedTemplatePath)) {
+            $this->fail('resolvedTemplatePath() must return string.');
+        }
+
+        /** @var string $resolvedTemplatePath */
+        $templateFullPath = $this->tempViewsPath . $resolvedTemplatePath;
+
+        if (!is_dir(dirname($templateFullPath))) {
+            mkdir(dirname($templateFullPath), 0o755, true);
+        }
+        file_put_contents($templateFullPath, '<div>ORIGINAL</div>');
+
+        $data = [];
+        $mockCacheKey = $generateCacheKey->invoke($this->viewer, $resolvedTemplatePath, $data);
+
+        if (!is_string($mockCacheKey)) {
+            $this->fail('generateCacheKey() must return string.');
+        }
+
+        /** @var string $mockCacheKey */
+        $mockCacheFile = $mockCacheDir . $mockCacheKey . '.php';
+
+        // Skapa cachefilen som ska användas
+        file_put_contents($mockCacheFile, '<div>Cached Content</div>');
+
+        $output = $this->viewer->render($mockTemplateName, $data);
+        $this->assertSame('<div>Cached Content</div>', $output, 'Cache användes inte korrekt.');
+
+        // Återställ APP_ENV
+        if ($originalEnv === false) {
+            putenv('APP_ENV');
+        } else {
+            putenv('APP_ENV=' . $originalEnv);
+        }
+    }
 
     public function testGlobalFiltersAreApplied(): void
     {
@@ -518,31 +523,31 @@ public function testCacheInvalidation(): void
         $this->assertSame('<p>HELLO</p>', $output);
     }
 
- public function testRenderComponentWithAttributesAndSlot(): void
-{
-    $componentPath = "{$this->tempViewsPath}components/alert.ratio.php";
-    $this->createDirectoryIfNotExists(dirname($componentPath));
-    file_put_contents($componentPath, '<div class="alert {{ $type }}">{{ $slot }}</div>');
+    public function testRenderComponentWithAttributesAndSlot(): void
+    {
+        $componentPath = "{$this->tempViewsPath}components/alert.ratio.php";
+        $this->createDirectoryIfNotExists(dirname($componentPath));
+        file_put_contents($componentPath, '<div class="alert {{ $type }}">{{ $slot }}</div>');
 
-    $this->assertFileExists($componentPath, '[DEBUG] Komponentfilen saknas: ' . $componentPath);
+        $this->assertFileExists($componentPath, '[DEBUG] Komponentfilen saknas: ' . $componentPath);
 
-    $templatePath = "{$this->tempViewsPath}test_template.ratio.php";
-    file_put_contents($templatePath, '<x-alert type="warning">This is an alert</x-alert>');
+        $templatePath = "{$this->tempViewsPath}test_template.ratio.php";
+        file_put_contents($templatePath, '<x-alert type="warning">This is an alert</x-alert>');
 
-    $output = $this->viewer->render('test_template');
-    $expectedOutput = '<div class="alert warning">This is an alert</div>';
+        $output = $this->viewer->render('test_template');
+        $expectedOutput = '<div class="alert warning">This is an alert</div>';
 
-    // Lägg till diff-verktyg för felutskrifter
-    $this->assertSame(
-        $expectedOutput,
-        $output,
-        sprintf(
-            "[DEBUG] Mismatch mellan förväntad och faktisk output.\nFörväntat:\n%s\nFaktiskt:\n%s",
-            htmlspecialchars($expectedOutput),
-            htmlspecialchars($output)
-        )
-    );
-}
+        // Lägg till diff-verktyg för felutskrifter
+        $this->assertSame(
+            $expectedOutput,
+            $output,
+            sprintf(
+                "[DEBUG] Mismatch mellan förväntad och faktisk output.\nFörväntat:\n%s\nFaktiskt:\n%s",
+                htmlspecialchars($expectedOutput),
+                htmlspecialchars($output)
+            )
+        );
+    }
 
     public function testRenderComponentWithoutSlot(): void
     {
@@ -671,9 +676,9 @@ public function testCacheInvalidation(): void
     private function createDirectoryIfNotExists(string $path): void
     {
         if (!is_dir($path)) {
-            $ok = @mkdir($path, 0755, true);
+            $ok = @mkdir($path, 0o755, true);
             if (!$ok && !is_dir($path)) {
-                throw new \RuntimeException('Kunde inte skapa katalog: ' . $path);
+                throw new RuntimeException('Kunde inte skapa katalog: ' . $path);
             }
         }
     }

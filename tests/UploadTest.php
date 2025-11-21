@@ -18,7 +18,7 @@ class UploadTest extends TestCase
         // Skapa tillfällig uppladdningsmapp
         $this->uploadDirectory = __DIR__ . '/uploads';
         if (!is_dir($this->uploadDirectory)) {
-            mkdir($this->uploadDirectory, 0755, true);
+            mkdir($this->uploadDirectory, 0o755, true);
         }
 
         // Skapa en mockad bildfil för att simulera en uppladdning

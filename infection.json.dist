@@ -1,0 +1,34 @@
+{
+    "$schema": "https://raw.githubusercontent.com/infection/infection/0.29.8/resources/schema.json",
+    "source": {
+        "directories": [
+            "src",
+            "framework/src"
+        ],
+        "excludes": [
+            "config",
+            "routes",
+            "resources",
+            "database",
+            "tests"
+        ]
+    },
+    "logs": {
+        "text": "php://stdout",
+        "html": "infection-report.html"
+    },
+    "mutators": {
+        "@default": true,
+        "global-ignore": [
+            "App\\Kernel::bootstrap",
+            "App\\Console\\Kernel::schedule"
+        ],
+        "BitwiseOr": {
+            "ignore": [
+                "App\\Controllers\\Api\\HealthController::index"
+            ]
+        }
+    },
+    "testFramework": "phpunit",
+    "bootstrap": "./vendor/autoload.php"
+}

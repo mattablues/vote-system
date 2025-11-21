@@ -21,7 +21,7 @@
           </div>
 
           <hr class="mb-6 border-gray-200  max-w-xl"/>
-          <p>Du måste ha ett <a href="{{ route('voter.create') }}" class="text-blue-600 underline hover:text-blue-800 hover:no-underline transition">registrerat</a> konto och vara <a href="{{ route('voter.auth.login') }}" class="text-blue-600 underline hover:text-blue-800 hover:no-underline transition">inloggad</a> för att kunna rösta</p>
+          <p>Du måste ha ett <a href="{{ route('voter.create') }}" class="text-blue-600 underline hover:text-blue-800 hover:no-underline transition">registrerat</a> konto och vara <a href="{{ route('voter.auth.login') }}" class="text-blue-600 underline hover:text-blue-800 hover:no-underline transition">inloggad</a> för att kunna rösta.</p>
 {% else : %}
         <p>Ämnet kunde inte hittas.</p>
 {% endif; %}

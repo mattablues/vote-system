@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Radix\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Radix\Routing\Router;
 
@@ -64,7 +65,7 @@ class RouterTest extends TestCase
             return 'Test passed';
         });
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->router->get('/test', function () {
             return 'Duplicate';
         });

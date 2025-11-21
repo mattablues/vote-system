@@ -1,0 +1,7 @@
+Ja, exakt där. Välj fliken Variables (inte Secrets) och lägg till repository variables:
+- Name: ENABLE_FRONTEND_BUILD, Value: 1 eller 0
+- Name: ENABLE_INFECTION_ON_PR, Value: 1 eller 0
+
+Då styrs workflowet utan att ändra YAML. När du skapar nya appar från templaten kan du sätta variablerna per repo under Settings -> Actions -> Secrets and variables -> Variables.
+
+Nej, du behöver inte sätta dem i template‑repon nu. Låt YAML:en ha rimliga default (t.ex. båda = '1'). När du skapar en ny app från templaten sätter du variablerna i den appens repo vid behov. Detta gör templaten generisk och varje app kan styra själv utan att ändra workflowfiler.

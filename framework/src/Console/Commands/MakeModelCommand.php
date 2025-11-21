@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Radix\Console\Commands;
 
-use Radix\Support\StringHelper; // använd relationernas pluralizer
+use Radix\Support\StringHelper;
 
+// använd relationernas pluralizer
 class MakeModelCommand extends BaseCommand
 {
     private string $modelPath;

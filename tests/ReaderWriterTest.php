@@ -7,6 +7,7 @@ namespace Radix\Tests;
 use PHPUnit\Framework\TestCase;
 use Radix\File\Reader;
 use Radix\File\Writer;
+use SimpleXMLElement;
 
 final class ReaderWriterTest extends TestCase
 {
@@ -16,7 +17,7 @@ final class ReaderWriterTest extends TestCase
     {
         parent::setUp();
         $this->tmpDir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'radix_file_' . bin2hex(random_bytes(4)) . DIRECTORY_SEPARATOR;
-        mkdir($this->tmpDir, 0775, true);
+        mkdir($this->tmpDir, 0o775, true);
     }
 
     protected function tearDown(): void
@@ -209,8 +210,8 @@ final class ReaderWriterTest extends TestCase
         Writer::xml($path, $data, rootName: 'root');
         $xml = Reader::xml($path, assoc: false);
 
-        $this->assertInstanceOf(\SimpleXMLElement::class, $xml);
-        $this->assertSame('1', (string)$xml->items->item->item[0]->id);
-        $this->assertSame('B', (string)$xml->items->item->item[1]->label);
+        $this->assertInstanceOf(SimpleXMLElement::class, $xml);
+        $this->assertSame('1', (string) $xml->items->item->item[0]->id);
+        $this->assertSame('B', (string) $xml->items->item->item[1]->label);
     }
 }

@@ -16,7 +16,7 @@ final class RadixSessionHandlerFileTest extends TestCase
     {
         parent::setUp();
         $this->tmpDir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'radix_sess_' . bin2hex(random_bytes(4)) . DIRECTORY_SEPARATOR;
-        @mkdir($this->tmpDir, 0755, true);
+        @mkdir($this->tmpDir, 0o755, true);
 
         $this->handler = new RadixSessionHandler([
             'driver' => 'file',

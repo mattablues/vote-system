@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 namespace App\Services;
+
 use Radix\File\Image;
+use RuntimeException;
 
 class UploadService
 {
@@ -16,18 +18,18 @@ class UploadService
     {
         // Kontrollera om filen har laddats upp korrekt
         if (!isset($file['tmp_name']) || $file['error'] !== UPLOAD_ERR_OK) {
-            throw new \RuntimeException('Fel vid uppladdning av filen.');
+            throw new RuntimeException('Fel vid uppladdning av filen.');
         }
 
         // Säkerställ att tmp_name är en sträng
         $tmpName = $file['tmp_name'];
         if (!is_string($tmpName) || $tmpName === '') {
-            throw new \RuntimeException('Ogiltigt tmp_name för uppladdad fil.');
+            throw new RuntimeException('Ogiltigt tmp_name för uppladdad fil.');
         }
 
         // Skapa uppladdningskatalog om den inte finns
         if (!is_dir($uploadDirectory)) {
-            mkdir($uploadDirectory, 0755, true);
+            mkdir($uploadDirectory, 0o755, true);
         }
 
         // Hämta MIME-typ
@@ -37,18 +39,18 @@ class UploadService
             'image/png' => 'png',
             'image/gif' => 'gif',
             'image/webp' => 'webp',
-            default => throw new \RuntimeException("Bildformat \"$mimeType\" stöds inte."),
+            default => throw new RuntimeException("Bildformat \"$mimeType\" stöds inte."),
         };
 
         // Skapa filnamn om det inte är specificerat
-        $fileName = $fileName ?? uniqid('image_', true) . '.' . $extension;
+        $fileName ??= uniqid('image_', true) . '.' . $extension;
 
         // Fullständig filväg
         $filePath = $uploadDirectory . $fileName;
 
         // Flytta till uppladdningsmappen
         if (!move_uploaded_file($tmpName, $filePath)) {
-            throw new \RuntimeException('Misslyckades med att flytta uppladdad fil.');
+            throw new RuntimeException('Misslyckades med att flytta uppladdad fil.');
         }
 
         // Bearbeta bilden om en callback skickas med

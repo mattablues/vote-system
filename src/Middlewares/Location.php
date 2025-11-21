@@ -13,9 +13,7 @@ use Radix\Support\GeoLocator;
 
 readonly class Location implements MiddlewareInterface
 {
-    public function __construct(private GeoLocator $geoLocator)
-    {
-    }
+    public function __construct(private GeoLocator $geoLocator) {}
 
     public function process(Request $request, RequestHandlerInterface $next): Response
     {

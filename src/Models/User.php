@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use InvalidArgumentException;
 use Radix\Database\ORM\Model;
 use Radix\Enums\Role;
+use RuntimeException;
 
 /**
  * @property int $id
@@ -113,7 +115,7 @@ class User extends Model
      * @return \Radix\Database\ORM\Relationships\HasOne
      * @phpstan-return \Radix\Database\ORM\Relationships\HasOne
      */
-    public function token():  \Radix\Database\ORM\Relationships\HasOne
+    public function token(): \Radix\Database\ORM\Relationships\HasOne
     {
         return $this->hasOne(Token::class, 'user_id', 'id');
     }
@@ -132,7 +134,7 @@ class User extends Model
             $status->goOnline(); // Markera som online
         } else {
             // Om status saknas, logga eller hantera detta beroende på applikationens behov.
-            throw new \RuntimeException('Status saknas för användaren och går inte att sätta Online.');
+            throw new RuntimeException('Status saknas för användaren och går inte att sätta Online.');
         }
 
         return $this;
@@ -152,7 +154,7 @@ class User extends Model
             $status->goOffline(); // Markera som offline
         } else {
             // Om status saknas, logga eller hantera detta beroende på applikationens behov.
-            throw new \RuntimeException('Status saknas för användaren och går inte att sätta Offline.');
+            throw new RuntimeException('Status saknas för användaren och går inte att sätta Offline.');
         }
 
         return $this;
@@ -182,7 +184,7 @@ class User extends Model
 
         try {
             $value = $this->fetchGuardedAttribute('role');
-        } catch (\InvalidArgumentException) {
+        } catch (InvalidArgumentException) {
             return null;
         }
         return is_string($value) ? Role::tryFrom($value) : null;
@@ -193,8 +195,8 @@ class User extends Model
     {
         $enum = $role instanceof Role ? $role : Role::tryFromName($role);
         if (!$enum) {
-            $roleLabel = $role instanceof Role ? $role->name : (string) $role;
-            throw new \InvalidArgumentException('Ogiltig roll: ' . $roleLabel);
+            $roleLabel = $role instanceof Role ? $role->name : $role;
+            throw new InvalidArgumentException('Ogiltig roll: ' . $roleLabel);
         }
         $this->attributes['role'] = $enum->value;
     }
@@ -252,16 +254,16 @@ class User extends Model
         return $this->hasRole(Role::User);
     }
 
-//    public function vote(): \Radix\Database\ORM\Relationships\HasManyThrough
-//    {
-//        // Category -> Subject(category_id=id) -> Vote(subject_id=subjects.id)
-//        return $this->hasManyThrough(
-//            Vote::class,      // related
-//            Subject::class,   // through
-//            'category_id',    // firstKey on subjects referencing categories.id
-//            'subject_id',     // secondKey on votes referencing subjects.id
-//            'id',             // localKey on categories
-//            'id'              // secondLocal on subjects
-//        );
-//    }
+    //    public function vote(): \Radix\Database\ORM\Relationships\HasManyThrough
+    //    {
+    //        // Category -> Subject(category_id=id) -> Vote(subject_id=subjects.id)
+    //        return $this->hasManyThrough(
+    //            Vote::class,      // related
+    //            Subject::class,   // through
+    //            'category_id',    // firstKey on subjects referencing categories.id
+    //            'subject_id',     // secondKey on votes referencing subjects.id
+    //            'id',             // localKey on categories
+    //            'id'              // secondLocal on subjects
+    //        );
+    //    }
 }

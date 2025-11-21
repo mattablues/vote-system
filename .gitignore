@@ -5,8 +5,7 @@ public/css/app.css
 public/js/app.js
 public/images/user
 # Composer- och npm-relaterade filer
-composer.lock
-package-lock.json
+
 vendor/
 node_modules/
 
@@ -19,3 +18,5 @@ phpunit.xml.bak
 .idea/
 cache/
 storage/
+.php-cs-fixer.cache
+infection-report.html

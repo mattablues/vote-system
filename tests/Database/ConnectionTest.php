@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Radix\Tests\Database;
 
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Radix\Database\Connection;
 
@@ -16,8 +17,8 @@ class ConnectionTest extends TestCase
         parent::setUp();
 
         // Skapa en PDO-instans för SQLite i minnet
-        $pdo = new \PDO('sqlite::memory:');
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $pdo = new PDO('sqlite::memory:');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Använd den uppdaterade Connection-klassen
         $this->connection = new Connection($pdo);

@@ -9,9 +9,12 @@
         }
     ],
     "scripts": {
-      "stan": "phpstan analyse",
-      "test": "phpunit"
-    },
+      "stan": "phpstan analyse -c phpstan.neon.dist",
+      "test": "php -d xdebug.mode=off vendor/bin/phpunit",
+      "test:cov": "php -d xdebug.mode=coverage vendor/bin/phpunit --coverage-text",
+      "format": "php-cs-fixer fix",
+      "format:check": "php-cs-fixer fix --dry-run --diff",
+      "infect": "php -d xdebug.mode=coverage vendor/bin/infection --threads=4 --min-msi=80 --min-covered-msi=90"    },
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
@@ -31,7 +34,9 @@
     "require-dev": {
         "symfony/var-dumper": "7.1.x-dev",
         "phpunit/phpunit": "^11.0@dev",
-        "phpstan/phpstan": "2.1.x-dev"
+        "phpstan/phpstan": "2.1.x-dev",
+        "friendsofphp/php-cs-fixer": "dev-master",
+        "infection/infection": "dev-master"
     },
     "require": {
         "php": "^8.3",
@@ -48,5 +53,10 @@
         "ext-iconv": "*",
         "ext-simplexml": "*",
         "ext-libxml": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
     }
 }

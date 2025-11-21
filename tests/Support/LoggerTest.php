@@ -17,7 +17,7 @@ final class LoggerTest extends TestCase
         parent::setUp();
         $this->tmpRoot = sys_get_temp_dir() . '/radix_logger_test_' . bin2hex(random_bytes(4));
         $this->logsDir = $this->tmpRoot . '/storage/logs';
-        @mkdir($this->logsDir, 0755, true);
+        @mkdir($this->logsDir, 0o755, true);
 
         if (!defined('ROOT_PATH')) {
             define('ROOT_PATH', $this->tmpRoot);
@@ -86,16 +86,22 @@ final class LoggerTest extends TestCase
     private function anyExisting(array $files): bool
     {
         foreach ($files as $f) {
-            if (is_file($f)) return true;
+            if (is_file($f)) {
+                return true;
+            }
         }
         return false;
     }
 
     private function deleteDir(string $dir): void
     {
-        if (!is_dir($dir)) return;
+        if (!is_dir($dir)) {
+            return;
+        }
         foreach (scandir($dir) ?: [] as $f) {
-            if ($f === '.' || $f === '..') continue;
+            if ($f === '.' || $f === '..') {
+                continue;
+            }
             $p = $dir . DIRECTORY_SEPARATOR . $f;
             if (is_dir($p)) {
                 $this->deleteDir($p);
