@@ -40,10 +40,10 @@ class Category extends Model
         return $value ? mb_ucfirst(mb_strtolower($value)) : null;
     }
 
-   public function subject(): \Radix\Database\ORM\Relationships\HasMany
-   {
-       return $this->hasMany(Subject::class, 'category_id', 'id');
-   }
+    public function subject(): \Radix\Database\ORM\Relationships\HasMany
+    {
+        return $this->hasMany(Subject::class, 'category_id', 'id');
+    }
 
     public function vote(): \Radix\Database\ORM\Relationships\HasManyThrough
     {

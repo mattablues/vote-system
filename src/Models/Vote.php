@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use InvalidArgumentException;
 use Radix\Database\ORM\Model;
 
 /**
@@ -22,7 +23,7 @@ class Vote extends Model
     public function setVoteAttribute(int $value): void
     {
         if (!in_array($value, [0, 1, 2], true)) {
-            throw new \InvalidArgumentException("Invalid vote value. Allowed values are: 0 = No, 1 = Not Sure, 2 = Yes.");
+            throw new InvalidArgumentException("Invalid vote value. Allowed values are: 0 = No, 1 = Not Sure, 2 = Yes.");
         }
 
         $this->attributes['vote'] = $value;
@@ -34,13 +35,13 @@ class Vote extends Model
         return $value;
     }
 
-   public function voter(): \Radix\Database\ORM\Relationships\BelongsTo
-   {
-       return $this->belongsTo(Voter::class, 'voter_id', 'id');
-   }
+    public function voter(): \Radix\Database\ORM\Relationships\BelongsTo
+    {
+        return $this->belongsTo(Voter::class, 'voter_id', 'id');
+    }
 
-   public function subject(): \Radix\Database\ORM\Relationships\BelongsTo
-   {
-       return $this->belongsTo(Subject::class, 'subject_id', 'id');
-   }
+    public function subject(): \Radix\Database\ORM\Relationships\BelongsTo
+    {
+        return $this->belongsTo(Subject::class, 'subject_id', 'id');
+    }
 }

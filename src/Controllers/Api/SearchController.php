@@ -30,7 +30,7 @@ class SearchController extends ApiController
 
         $term = is_string($termRaw) ? $termRaw : '';
         $currentPage = is_numeric($currentPageRaw) ? (int) $currentPageRaw : 1;
-        $perPage     = is_numeric($perPageRaw)     ? (int) $perPageRaw     : 10;
+        $perPage     = is_numeric($perPageRaw) ? (int) $perPageRaw : 10;
 
         // Kontrollera om söktermen är tom, och returnera tomma resultat om så är fallet
         if ($term === '') {
@@ -102,7 +102,7 @@ class SearchController extends ApiController
 
         $term = is_string($termRaw) ? $termRaw : '';
         $currentPage = is_numeric($currentPageRaw) ? (int) $currentPageRaw : 1;
-        $perPage     = is_numeric($perPageRaw)     ? (int) $perPageRaw     : 10;
+        $perPage     = is_numeric($perPageRaw) ? (int) $perPageRaw : 10;
 
         // Kontrollera om söktermen är tom, och returnera tomma resultat om så är fallet
         if ($term === '') {

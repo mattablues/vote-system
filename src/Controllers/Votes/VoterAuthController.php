@@ -10,14 +10,14 @@ use Radix\Controller\AbstractController;
 use Radix\Http\RedirectResponse;
 use Radix\Http\Response;
 use Radix\Support\Validator;
+use ReflectionClass;
 
 class VoterAuthController extends AbstractController
 {
     public function __construct(
         private readonly VoterService $voterService,
         private readonly VoterSessionService $voterSession
-    ) {
-    }
+    ) {}
 
     public function login(): Response
     {
@@ -49,7 +49,7 @@ class VoterAuthController extends AbstractController
         /** @var \App\Services\VoterAuthService $throttle */
         $throttle = (function ($svc) {
             // enkel accessor utan att ändra VoterService publikt API i onödan:
-            $r = new \ReflectionClass($svc);
+            $r = new ReflectionClass($svc);
             $p = $r->getProperty('throttle');
             $p->setAccessible(true);
             return $p->getValue($svc);
@@ -57,7 +57,7 @@ class VoterAuthController extends AbstractController
 
         if ($throttle->isBlocked($email)) {
             $val = $throttle->getBlockedUntil($email);
-            $blockedUntil = is_numeric($val) ? (int)$val : 0;
+            $blockedUntil = is_numeric($val) ? (int) $val : 0;
             $remainingTime = max(0, $blockedUntil - time());
 
             // Räkna ut minuter och sekunder kvar

@@ -25,8 +25,8 @@ class VoterSessionService
     {
         $session = $this->request->session();
         $session->set(self::SESS_AUTH, true);
-        $session->set(self::SESS_ID, (int)$voter->id);
-        $session->set(self::SESS_EMAIL, (string)$voter->email);
+        $session->set(self::SESS_ID, (int) $voter->id);
+        $session->set(self::SESS_EMAIL, (string) $voter->email);
         $session->set(self::SESS_LAST, time());
         $session->set(self::SESS_IP, $_SERVER['REMOTE_ADDR'] ?? '');
         $session->set(self::SESS_UA, $_SERVER['HTTP_USER_AGENT'] ?? '');

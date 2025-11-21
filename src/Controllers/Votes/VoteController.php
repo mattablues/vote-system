@@ -17,10 +17,7 @@ class VoteController extends AbstractController
     public function __construct(
         private readonly VoterService $voterService,
         private readonly VoterSessionService $voterSession
-
-    )
-    {
-    }
+    ) {}
 
     public function index(string $id): Response
     {
@@ -61,7 +58,7 @@ class VoteController extends AbstractController
             $this->request->session()->set('old', $data);
             return $this->view('votes.vote.index', [
                 'subject' => $subject,
-                'isVoterAuthenticated' => (bool)$currentVoter,
+                'isVoterAuthenticated' => (bool) $currentVoter,
                 'voterEmail' => $this->request->session()->get('voter_email'),
                 'errors'  => $validator->errors(),
             ]);
@@ -81,10 +78,10 @@ class VoteController extends AbstractController
         $filtered = $this->request->filterFields($data);
 
         if ($currentVoter) {
-             // Säkerställ att vi castar till int (filterFields returnerar array<string, mixed>)
-             $voteVal = $filtered['vote'] ?? 0;
-             $voteValue = is_numeric($voteVal) ? (int) $voteVal : 0;
-             $this->voterService->castVote($subject, $currentVoter, $voteValue);
+            // Säkerställ att vi castar till int (filterFields returnerar array<string, mixed>)
+            $voteVal = $filtered['vote'] ?? 0;
+            $voteValue = is_numeric($voteVal) ? (int) $voteVal : 0;
+            $this->voterService->castVote($subject, $currentVoter, $voteValue);
         }
 
         $this->request->session()->remove('old');

@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
+use App\Services\VoterSessionService;
+use Radix\Http\RedirectResponse;
 use Radix\Http\Request;
 use Radix\Http\RequestHandlerInterface;
 use Radix\Http\Response;
-use Radix\Http\RedirectResponse;
 use Radix\Middleware\MiddlewareInterface;
-use App\Services\VoterSessionService;
 
 readonly class VoterAuth implements MiddlewareInterface
 {
-    public function __construct(private VoterSessionService $voterSession)
-        {
-        }
+    public function __construct(private VoterSessionService $voterSession) {}
 
     public function process(Request $request, RequestHandlerInterface $next): Response
     {

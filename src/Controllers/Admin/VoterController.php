@@ -14,9 +14,7 @@ use Radix\Support\Token;
 
 class VoterController extends AbstractController
 {
-    public function __construct(private readonly EventDispatcher $eventDispatcher)
-    {
-    }
+    public function __construct(private readonly EventDispatcher $eventDispatcher) {}
 
     public function index(): Response
     {
@@ -31,7 +29,7 @@ class VoterController extends AbstractController
         $page = (int) $rawPage;
 
         $voters = Voter::withCount('vote')
-            ->paginate(10, (int)$page);
+            ->paginate(10, (int) $page);
 
         return $this->view('admin.voter.index', ['voters' => $voters]);
     }
@@ -55,7 +53,7 @@ class VoterController extends AbstractController
 
         $voter->fill([
             'activation' => $token->hashHmac(),
-            'status' => 'activate'
+            'status' => 'activate',
         ]);
 
         $voter->save();

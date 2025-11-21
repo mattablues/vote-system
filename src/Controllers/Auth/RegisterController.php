@@ -17,9 +17,7 @@ use Radix\Support\Validator;
 
 class RegisterController extends AbstractController
 {
-    public function __construct(private readonly EventDispatcher $eventDispatcher)
-    {
-    }
+    public function __construct(private readonly EventDispatcher $eventDispatcher) {}
 
     public function index(): Response
     {
@@ -61,7 +59,7 @@ class RegisterController extends AbstractController
             $this->request->session()->set('old', $data);
 
             // If multiple honeypot fields are used, you can use the following code to generate a new honeypot ID:
-//          $newHoneypotId = $validator->regenerateHoneypotId(fn () => generate_honeypot_id());
+            //          $newHoneypotId = $validator->regenerateHoneypotId(fn () => generate_honeypot_id());
 
             $newHoneypotId = generate_honeypot_id();
             $this->request->session()->set('honeypot_id', $newHoneypotId);
@@ -114,7 +112,7 @@ class RegisterController extends AbstractController
         $user->save();
 
         // Skapa en API-token i tokens-tabellen
-        \App\Models\Token::createToken((int)$user->id, 'API Token for user registration');
+        \App\Models\Token::createToken((int) $user->id, 'API Token for user registration');
 
         // Skapa token
         $token = new Token();

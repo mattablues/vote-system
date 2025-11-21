@@ -14,6 +14,7 @@ use Radix\Http\RedirectResponse;
 use Radix\Http\Response;
 use Radix\Session\Session;
 use Radix\Support\Validator;
+use RuntimeException;
 
 class UserController extends AbstractController
 {
@@ -114,7 +115,7 @@ class UserController extends AbstractController
                 }
 
                 $data['avatar'] = $uploadService->uploadAvatar($avatar, $uploadDirectory);
-            } catch (\RuntimeException $e) {
+            } catch (RuntimeException $e) {
                 return $this->view('user.edit', [
                     'errors' => ['avatar' => $e->getMessage()],
                 ]);
@@ -198,7 +199,7 @@ class UserController extends AbstractController
         $status = $user->getRelation('status');
 
         if (!$status instanceof Status) {
-            throw new \RuntimeException('Status relation is not loaded or invalid.');
+            throw new RuntimeException('Status relation is not loaded or invalid.');
         }
 
         $status->fill(['status' => 'closed', 'active' => 'offline']);

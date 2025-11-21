@@ -13,8 +13,7 @@ readonly class LogoutListener
 {
     public function __construct(
         private SessionInterface $session
-    ) {
-    }
+    ) {}
 
     public function __invoke(UserBlockedEvent $event): void
     {

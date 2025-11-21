@@ -10,8 +10,7 @@ class UserBlockedEvent extends Event
 {
     public function __construct(
         private readonly int $userId,
-    ) {
-    }
+    ) {}
 
     public function getUserId(): int
     {

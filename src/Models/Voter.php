@@ -50,10 +50,10 @@ class Voter extends Model
         return $value ?? null; // Returnera null om det inte finns
     }
 
-   public function vote(): \Radix\Database\ORM\Relationships\HasMany
-   {
-       return $this->hasMany(Vote::class, 'voter_id', 'id');
-   }
+    public function vote(): \Radix\Database\ORM\Relationships\HasMany
+    {
+        return $this->hasMany(Vote::class, 'voter_id', 'id');
+    }
 
     public function translateStatus(string $status): string
     {
@@ -65,14 +65,14 @@ class Voter extends Model
         };
     }
 
-   public function subject(): \Radix\Database\ORM\Relationships\BelongsToMany
-   {
-       return $this->belongsToMany(
-           Subject::class,   // Relaterad modell
-           'votes',          // Pivot-tabell
-           'voter_id',       // Främmande nyckel för denna modell
-           'subject_id',     // Främmande nyckel för relaterad modell
-           'id'              // Primärnyckel för denna modell
-       );
-   }
+    public function subject(): \Radix\Database\ORM\Relationships\BelongsToMany
+    {
+        return $this->belongsToMany(
+            Subject::class,   // Relaterad modell
+            'votes',          // Pivot-tabell
+            'voter_id',       // Främmande nyckel för denna modell
+            'subject_id',     // Främmande nyckel för relaterad modell
+            'id'              // Primärnyckel för denna modell
+        );
+    }
 }

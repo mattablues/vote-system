@@ -10,9 +10,7 @@ use App\Models\Voter;
 
 readonly class VoterService
 {
-    public function __construct(private VoterAuthService $throttle)
-    {
-    }
+    public function __construct(private VoterAuthService $throttle) {}
 
     /**
      * Verifiera väljare och returnera modellen eller null.

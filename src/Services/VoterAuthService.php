@@ -8,9 +8,7 @@ use Radix\Session\SessionInterface;
 
 readonly class VoterAuthService
 {
-    public function __construct(private SessionInterface $session)
-    {
-    }
+    public function __construct(private SessionInterface $session) {}
 
     public function isBlocked(string $email): bool
     {

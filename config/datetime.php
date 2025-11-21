@@ -18,5 +18,5 @@ return [
         'minutes' => 'min',
         'now' => 'nu',
         'seconds' => 'sek',
-    ]
+    ],
 ];

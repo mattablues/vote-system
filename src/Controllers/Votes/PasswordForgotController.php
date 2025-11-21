@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controllers\Votes;
 
-use App\Events\UserPasswordEvent;
 use App\Events\VoterPasswordEvent;
 use App\Models\Voter;
 use App\Services\AuthService;
@@ -20,9 +19,7 @@ class PasswordForgotController extends AbstractController
     public function __construct(
         private readonly EventDispatcher  $eventDispatcher,
         private readonly AuthService $authService,
-    )
-    {
-    }
+    ) {}
 
     public function index(): Response
     {

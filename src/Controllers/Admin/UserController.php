@@ -15,12 +15,11 @@ use Radix\Http\RedirectResponse;
 use Radix\Http\Response;
 use Radix\Support\Token;
 use Radix\Support\Validator;
+use RuntimeException;
 
 class UserController extends AbstractController
 {
-    public function __construct(private readonly EventDispatcher $eventDispatcher)
-    {
-    }
+    public function __construct(private readonly EventDispatcher $eventDispatcher) {}
 
     public function index(): Response
     {
@@ -85,7 +84,7 @@ class UserController extends AbstractController
         $user->save();
 
         // Skapa en API-token i tokens-tabellen
-        \App\Models\Token::createToken((int)$user->id, 'API Token for user registration');
+        \App\Models\Token::createToken((int) $user->id, 'API Token for user registration');
 
         // Skapa token
         $token = new Token();
@@ -149,12 +148,12 @@ class UserController extends AbstractController
         $status = $user->getRelation('status');
 
         if (!$status instanceof Status) {
-            throw new \RuntimeException('Status relation is not loaded or invalid.');
+            throw new RuntimeException('Status relation is not loaded or invalid.');
         }
 
         $status->fill([
             'activation' => $token->hashHmac(),
-            'status' => 'activate'
+            'status' => 'activate',
         ]);
 
         $status->save();
@@ -208,7 +207,7 @@ class UserController extends AbstractController
         $status = $user->getRelation('status');
 
         if (!$status instanceof Status) {
-            throw new \RuntimeException('Status relation is not loaded or invalid.');
+            throw new RuntimeException('Status relation is not loaded or invalid.');
         }
 
         $status->fill([
@@ -275,7 +274,7 @@ class UserController extends AbstractController
                 "Användare kunde inte hittas."
             );
 
-            return new RedirectResponse(route('admin.user.closed'). '?page=' . $currentPage);
+            return new RedirectResponse(route('admin.user.closed') . '?page=' . $currentPage);
         }
 
         $user->restore();
@@ -289,7 +288,7 @@ class UserController extends AbstractController
         $status = $user->getRelation('status');
 
         if (!$status instanceof Status) {
-            throw new \RuntimeException('Status relation is not loaded or invalid.');
+            throw new RuntimeException('Status relation is not loaded or invalid.');
         }
 
         $status->fill([

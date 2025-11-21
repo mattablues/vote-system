@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Subject;
-use App\Models\Voter;
 use App\Models\Vote;
+use App\Models\Voter;
 
 readonly class SubjectService
 {
-    public function __construct(private VoterService $voterService)
-    {
-    }
+    public function __construct(private VoterService $voterService) {}
 
     /**
      * Skapa nytt ämne och första röst.

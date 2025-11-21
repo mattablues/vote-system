@@ -11,9 +11,7 @@ use Radix\Http\Response;
 
 class LogoutController extends AbstractController
 {
-    public function __construct(private readonly Auth $auth)
-    {
-    }
+    public function __construct(private readonly Auth $auth) {}
 
     /**
      * Hantera utloggning

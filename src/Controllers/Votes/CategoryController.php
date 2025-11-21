@@ -14,8 +14,7 @@ class CategoryController extends AbstractController
 {
     public function __construct(
         private readonly VoterSessionService $voterSession
-    ) {
-    }
+    ) {}
 
     public function index(): Response
     {
@@ -57,7 +56,7 @@ class CategoryController extends AbstractController
             ->orderBy('vote_count', 'desc')
             ->paginate(10, $page);
 
-        $category = Category::with('subject')->where('id','=', $id)->first();
+        $category = Category::with('subject')->where('id', '=', $id)->first();
 
         $isAuth = $this->voterSession->isAuthenticated();
         $alreadyVotedIds = [];
@@ -66,11 +65,11 @@ class CategoryController extends AbstractController
             $voter = $this->voterSession->current();
             if ($voter) {
                 $rows = Vote::select(['subject_id'])
-                    ->where('voter_id', '=', (int)$voter->id)
+                    ->where('voter_id', '=', (int) $voter->id)
                     ->get();
                 foreach ($rows as $row) {
                     $val = $row->getAttribute('subject_id');
-                    $alreadyVotedIds[] = is_numeric($val) ? (int)$val : null;
+                    $alreadyVotedIds[] = is_numeric($val) ? (int) $val : null;
                 }
             }
         }

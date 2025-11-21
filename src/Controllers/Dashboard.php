@@ -6,8 +6,8 @@ namespace App\Controllers;
 
 use App\Models\Category;
 use App\Models\Subject;
-use App\Models\Voter;
 use App\Models\Vote;
+use App\Models\Voter;
 use Radix\Controller\AbstractController;
 use Radix\Http\Response;
 

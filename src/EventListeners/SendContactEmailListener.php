@@ -6,6 +6,7 @@ namespace App\EventListeners;
 
 use App\Events\ContactFormEvent;
 use Radix\Mailer\MailManager;
+use RuntimeException;
 
 readonly class SendContactEmailListener
 {
@@ -16,7 +17,7 @@ readonly class SendContactEmailListener
         $to = getenv('MAIL_EMAIL');
 
         if ($to === false || $to === '') {
-            throw new \RuntimeException('MAIL_EMAIL env-variabeln är inte satt.');
+            throw new RuntimeException('MAIL_EMAIL env-variabeln är inte satt.');
         }
 
         $this->mailManager->send(

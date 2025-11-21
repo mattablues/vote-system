@@ -6,6 +6,7 @@ namespace App\EventListeners;
 
 use App\Events\CreateSubjectEvent;
 use Radix\Mailer\MailManager;
+use RuntimeException;
 
 readonly class SendCreateSubjectEmailListener
 {
@@ -16,7 +17,7 @@ readonly class SendCreateSubjectEmailListener
         $to = getenv('MAIL_EMAIL');
 
         if ($to === false || $to === '') {
-            throw new \RuntimeException('MAIL_EMAIL env-variabeln är inte satt.');
+            throw new RuntimeException('MAIL_EMAIL env-variabeln är inte satt.');
         }
 
         $this->mailManager->send(

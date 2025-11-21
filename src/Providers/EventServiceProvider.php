@@ -20,13 +20,11 @@ class EventServiceProvider implements ServiceProviderInterface
         ResponseEvent::class => [
             CorsListener::class,
             ContentLengthListener::class,
-            CacheControlListener::class
+            CacheControlListener::class,
         ],
     ];
 
-    public function __construct(private readonly EventDispatcher $eventDispatcher)
-    {
-    }
+    public function __construct(private readonly EventDispatcher $eventDispatcher) {}
 
     public function register(): void
     {

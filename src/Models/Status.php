@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use InvalidArgumentException;
 use Radix\Database\ORM\Model;
+use RuntimeException;
 
 /**
  * @property int $id
@@ -43,7 +45,7 @@ class Status extends Model
     public function goOffline(): self
     {
         if ($this->active !== 'online') {
-            throw new \RuntimeException("Status kan endast sättas till 'offline' om den tidigare var 'online'.");
+            throw new RuntimeException("Status kan endast sättas till 'offline' om den tidigare var 'online'.");
         }
 
         $this->active = 'offline';
@@ -90,13 +92,13 @@ class Status extends Model
         return null;
     }
 
-    public function getActiveAtAttribute(null|int $value): ?string
+    public function getActiveAtAttribute(?int $value): ?string
     {
         // Om värdet är null, returnera null, annars formatera som läsbart datum
         return $value ? date('Y-m-d H:i:s', (int) $value) : null;
-        }
+    }
 
-    public function setActiveAtAttribute(null|int|float|string $value): void
+    public function setActiveAtAttribute(int|float|string|null $value): void
     {
         if (is_null($value)) {
             $this->attributes['active_at'] = null;
@@ -105,7 +107,7 @@ class Status extends Model
         } elseif (is_string($value) && strtotime($value)) {
             $this->attributes['active_at'] = strtotime($value);
         } else {
-            throw new \InvalidArgumentException("Ogiltigt värde för active_at: $value");
+            throw new InvalidArgumentException("Ogiltigt värde för active_at: $value");
         }
     }
 

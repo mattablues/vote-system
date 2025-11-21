@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 use App\Models\Category;
+use InvalidArgumentException;
 use Radix\Controller\AbstractController;
 use Radix\Http\RedirectResponse;
 use Radix\Http\Response;
@@ -43,7 +44,7 @@ class CategoryController extends AbstractController
         // Validera data inklusive avatar
         $validator = new Validator($data, [
             'category' => 'required|min:5|max:200|unique:App\Models\Category,category',
-            'description' => 'required|min:10|max:1000'
+            'description' => 'required|min:10|max:1000',
         ]);
 
         if (!$validator->validate()) {
@@ -74,7 +75,7 @@ class CategoryController extends AbstractController
         $category = Category::find($id);
 
         if (!$category) {
-            throw new \InvalidArgumentException('Category not found');
+            throw new InvalidArgumentException('Category not found');
         }
 
         return $this->view('admin.category.edit', ['category' => $category]);
@@ -95,7 +96,7 @@ class CategoryController extends AbstractController
         // Validera data inklusive avatar
         $validator = new Validator($data, [
             'category' => 'required|min:5|max:200|unique:App\Models\Category,category,id=' . $category->id,
-            'description' => 'required|min:10|max:1000'
+            'description' => 'required|min:10|max:1000',
         ]);
 
         if (!$validator->validate()) {
@@ -104,7 +105,7 @@ class CategoryController extends AbstractController
 
             return $this->view('admin.category.create', [
                 'errors' => $validator->errors(),
-                'category' => $category
+                'category' => $category,
             ]);
         }
 
@@ -126,7 +127,7 @@ class CategoryController extends AbstractController
         $category = Category::find($id);
 
         if (!$category) {
-            throw new \InvalidArgumentException('Category not found');
+            throw new InvalidArgumentException('Category not found');
         }
 
         $category->forceDelete();

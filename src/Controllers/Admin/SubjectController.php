@@ -6,6 +6,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\Category;
 use App\Models\Subject;
+use InvalidArgumentException;
 use Radix\Controller\AbstractController;
 use Radix\Http\RedirectResponse;
 use Radix\Http\Response;
@@ -28,19 +29,19 @@ class SubjectController extends AbstractController
         $subjects = Subject::with('category')
             ->orderBy('published')
             ->orderBy('id', 'desc')
-            ->paginate(10, (int)$page);
+            ->paginate(10, (int) $page);
 
         return $this->view('admin.subject.index', ['subjects' => $subjects]);
     }
 
-    public function create() : Response
+    public function create(): Response
     {
         $categories = Category::all();
 
         return $this->view('admin.subject.create', ['categories' => $categories]);
     }
 
-    public function store() : Response
+    public function store(): Response
     {
         $this->before();
         $data = $this->request->post;
@@ -92,7 +93,7 @@ class SubjectController extends AbstractController
         $categories = Category::all();
 
         if (!$subject) {
-            throw new \InvalidArgumentException('Subject not found');
+            throw new InvalidArgumentException('Subject not found');
         }
 
         return $this->view('admin.subject.edit', ['subject' => $subject, 'categories' => $categories]);
@@ -108,8 +109,8 @@ class SubjectController extends AbstractController
 
         // Kontrollera om ämnet existerar
         if (!$subject) {
-             $this->request->session()->setFlashMessage('Ämnet hittades inte.', 'error');
-             return new RedirectResponse(route('admin.subject.index'));
+            $this->request->session()->setFlashMessage('Ämnet hittades inte.', 'error');
+            return new RedirectResponse(route('admin.subject.index'));
         }
 
         // Validera data inklusive avatar
@@ -126,7 +127,7 @@ class SubjectController extends AbstractController
             return $this->view('admin.subject.edit', [
                 'errors' => $validator->errors(),
                 'subject' => $subject,
-                'categories' => $categories
+                'categories' => $categories,
             ]);
         }
 
@@ -174,7 +175,7 @@ class SubjectController extends AbstractController
         $subject = Subject::find($id);
 
         if (!$subject) {
-            throw new \InvalidArgumentException('Subject not found');
+            throw new InvalidArgumentException('Subject not found');
         }
 
         $subject->forceDelete();

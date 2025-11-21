@@ -31,24 +31,24 @@ class Subject extends Model
         return $value ? mb_ucfirst(mb_strtolower($value)) : null;
     }
 
-   public function category(): \Radix\Database\ORM\Relationships\BelongsTo
-   {
-       return $this->belongsTo(Category::class, 'category_id', 'id');
-   }
+    public function category(): \Radix\Database\ORM\Relationships\BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
 
-   public function vote(): \Radix\Database\ORM\Relationships\HasMany
-   {
-       return $this->hasMany(Vote::class, 'subject_id', 'id');
-   }
+    public function vote(): \Radix\Database\ORM\Relationships\HasMany
+    {
+        return $this->hasMany(Vote::class, 'subject_id', 'id');
+    }
 
-   public function voter(): \Radix\Database\ORM\Relationships\BelongsToMany
-   {
-       return $this->belongsToMany(
-           Voter::class,      // Relaterad modell
-           'votes',           // Pivot-tabell
-           'subject_id',      // Främmande nyckel för denna modell
-           'voter_id',        // Främmande nyckel för relaterad modell
-           'id'               // Primärnyckel för denna modell
-       );
-   }
+    public function voter(): \Radix\Database\ORM\Relationships\BelongsToMany
+    {
+        return $this->belongsToMany(
+            Voter::class,      // Relaterad modell
+            'votes',           // Pivot-tabell
+            'subject_id',      // Främmande nyckel för denna modell
+            'voter_id',        // Främmande nyckel för relaterad modell
+            'id'               // Primärnyckel för denna modell
+        );
+    }
 }

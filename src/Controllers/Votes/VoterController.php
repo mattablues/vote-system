@@ -20,9 +20,7 @@ class VoterController extends AbstractController
     public function __construct(
         private readonly EventDispatcher $eventDispatcher,
         private readonly VoterService $voterService
-    )
-    {
-    }
+    ) {}
 
     public function index(): Response
     {
@@ -81,7 +79,7 @@ class VoterController extends AbstractController
                 'errors' => $validator->errors(),
             ]);
         }
-        
+
         $data = $this->request->filterFields($data);
         $this->request->session()->remove('honeypot_id');
         $this->request->session()->remove('old');
@@ -156,7 +154,7 @@ class VoterController extends AbstractController
         ]);
     }
 
-    public function store() : Response
+    public function store(): Response
     {
         $this->before();
         $data = $this->request->post;
@@ -266,7 +264,7 @@ class VoterController extends AbstractController
         }
 
         return $this->view('votes.voter.delete', [
-            'token' => $token->value()
+            'token' => $token->value(),
         ]);
     }
 

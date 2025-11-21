@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use Exception;
+use InvalidArgumentException;
 use PHPMailer\PHPMailer\PHPMailer;
 use Radix\Config\Config;
 use Radix\Mailer\MailerInterface;
 use Radix\Viewer\TemplateViewerInterface;
+use UnexpectedValueException;
 
 class PHPMailerMailer implements MailerInterface
 {
@@ -26,7 +29,7 @@ class PHPMailerMailer implements MailerInterface
         // Hämta inställningarna från konfigurationen
         $mailConfig = $this->config->get('email');
         if (!is_array($mailConfig)) {
-            throw new \UnexpectedValueException('Config "email" måste vara en array.');
+            throw new UnexpectedValueException('Config "email" måste vara en array.');
         }
 
         /** @var array{
@@ -88,7 +91,7 @@ class PHPMailerMailer implements MailerInterface
 
             // Validera `From`-adressen
             if (!filter_var($fromEmail, FILTER_VALIDATE_EMAIL)) {
-                throw new \InvalidArgumentException("Invalid From email address: $fromEmail");
+                throw new InvalidArgumentException("Invalid From email address: $fromEmail");
             }
 
             // Sätt avsändare och mottagare
@@ -128,7 +131,7 @@ class PHPMailerMailer implements MailerInterface
             $this->mailer->Body = $body;
 
             return $this->mailer->send();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log("Mail could not be sent. Error: " . $e->getMessage());
             return false;
         }

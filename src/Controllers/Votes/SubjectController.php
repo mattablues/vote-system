@@ -20,9 +20,7 @@ class SubjectController extends AbstractController
     public function __construct(
         public readonly EventDispatcher $eventDispatcher,
         private readonly VoterSessionService $voterSession
-    )
-    {
-    }
+    ) {}
 
     public function index(): Response
     {
@@ -58,7 +56,7 @@ class SubjectController extends AbstractController
                     ->get();
                 foreach ($rows as $row) {
                     $val = $row->getAttribute('subject_id');
-                    $alreadyVotedIds[] = is_numeric($val) ? (int)$val : null;
+                    $alreadyVotedIds[] = is_numeric($val) ? (int) $val : null;
                 }
             }
         }
@@ -70,7 +68,7 @@ class SubjectController extends AbstractController
         ]);
     }
 
-    public function create() : Response
+    public function create(): Response
     {
         // Generera och spara hp-id för första visningen
         $honeypotId = generate_honeypot_id();
@@ -80,11 +78,11 @@ class SubjectController extends AbstractController
 
         return $this->view('votes.subject.create', [
             'honeypotId' => $honeypotId,
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 
-    public function store() : Response
+    public function store(): Response
     {
         $this->before();
         $data = $this->request->post;
@@ -105,7 +103,7 @@ class SubjectController extends AbstractController
         if (!$validator->validate()) {
             $this->request->session()->set('old', $data);
 
-            $newHoneypotId = $validator->regenerateHoneypotId(fn () => generate_honeypot_id());
+            $newHoneypotId = $validator->regenerateHoneypotId(fn() => generate_honeypot_id());
 
             return $this->view('votes.subject.create', [
                 'honeypotId' => $newHoneypotId,
@@ -136,7 +134,7 @@ class SubjectController extends AbstractController
         $category = Category::find($categoryId);
 
         // Hämta kategorinamn säkert
-        $categoryNameRaw = ($category instanceof Category) ?    $category->getAttribute('category') : '';
+        $categoryNameRaw = ($category instanceof Category) ? $category->getAttribute('category') : '';
         $categoryName = is_string($categoryNameRaw) ? $categoryNameRaw : '';
         $email  = is_string($filtered['email'] ?? null) ? $filtered['email'] : '';
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Radix\Database\ORM\Model;
+use RuntimeException;
 
 /**
  * @property int $id
@@ -64,7 +65,7 @@ class Token extends Model
         if (!is_null($validityDays)) {
             $timestamp = strtotime("+$validityDays days");
             if ($timestamp === false) {
-                throw new \RuntimeException('Kunde inte beräkna utgångsdatum för token.');
+                throw new RuntimeException('Kunde inte beräkna utgångsdatum för token.');
             }
 
             $token->expires_at = date('Y-m-d H:i:s', $timestamp);

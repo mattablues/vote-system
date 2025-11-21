@@ -20,9 +20,7 @@ class PasswordForgotController extends AbstractController
     public function __construct(
         private readonly EventDispatcher  $eventDispatcher,
         private readonly AuthService $authService,
-    )
-    {
-    }
+    ) {}
 
     public function index(): Response
     {

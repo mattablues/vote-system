@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Radix\Config\Config;
 use Radix\Config\Dotenv;
-use Radix\Console\Commands\MigrationCommand;
 use Radix\Console\CommandsRegistry;
 use Radix\Database\DatabaseManager;
 use Radix\Database\Migration\Migrator;
@@ -237,10 +236,10 @@ $container->add(\Radix\Console\Commands\MakeMigrationCommand::class, function ()
 
     // Säkerställ att katalogerna är tillgängliga
     if (!is_dir($migrationPath)) {
-        mkdir($migrationPath, 0755, true);
+        mkdir($migrationPath, 0o755, true);
     }
     if (!is_dir($templatePath)) {
-        mkdir($templatePath, 0755, true);
+        mkdir($templatePath, 0o755, true);
     }
 
     // Returnera en korrekt instans
@@ -258,10 +257,10 @@ $container->add(\Radix\Console\Commands\MakeModelCommand::class, function () {
 
     // Kontrollera och skapa katalogerna om de inte existerar
     if (!is_dir($modelPath)) {
-        mkdir($modelPath, 0755, true);
+        mkdir($modelPath, 0o755, true);
     }
     if (!is_dir($templatePath)) {
-        mkdir($templatePath, 0755, true);
+        mkdir($templatePath, 0o755, true);
     }
 
     // Returnera instansen av MakeModelCommand med rätt beroenden
@@ -330,7 +329,7 @@ $container->add(\Radix\Http\Response::class);
 $container->add(\Radix\Http\Request::class);
 $container->add(\Radix\Routing\Router::class);
 
-$container->addShared(\Radix\Viewer\TemplateViewerInterface::class, function () use($container) {
+$container->addShared(\Radix\Viewer\TemplateViewerInterface::class, function () use ($container) {
     $session = $container->get(\Radix\Session\SessionInterface::class);
     $datetime = $container->get(\Radix\DateTime\RadixDateTime::class); // Hämta den delade RadixDateTime-instansen
     $viewer = new \Radix\Viewer\RadixTemplateViewer();

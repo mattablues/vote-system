@@ -22,13 +22,13 @@ class PasswordResetController extends AbstractController
 
         /** @var Voter $voter */
         if (!$voter || strtotime($voter->reset_expires_at) < time()) {
-            $this->request->session()->setFlashMessage('Återställningslänken är inte giltig, begär en ny.','error');
+            $this->request->session()->setFlashMessage('Återställningslänken är inte giltig, begär en ny.', 'error');
 
             return new RedirectResponse(route('votes.password-forgot.index'));
         }
 
         return $this->view('votes.voter.password-reset', [
-            'token' => $token->value()
+            'token' => $token->value(),
         ]);
     }
 
@@ -67,7 +67,7 @@ class PasswordResetController extends AbstractController
 
         /** @var Voter $voter */
         if (!$voter || strtotime($voter->reset_expires_at) < time()) {
-            $this->request->session()->setFlashMessage('Återställningslänken är inte giltig, begär en ny.','error');
+            $this->request->session()->setFlashMessage('Återställningslänken är inte giltig, begär en ny.', 'error');
 
             return new RedirectResponse(route('votes.password-forgot.index'));
         }

@@ -13,9 +13,7 @@ use Radix\Support\Validator;
 
 class ContactController extends AbstractController
 {
-    public function __construct(private readonly EventDispatcher $eventDispatcher)
-    {
-    }
+    public function __construct(private readonly EventDispatcher $eventDispatcher) {}
 
     public function index(): Response
     {
